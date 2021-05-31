@@ -8,7 +8,7 @@ import (
 func TestPeriodicUpdaterIsStopping(t *testing.T) {
 	quitChan := make(chan struct{})
 
-	updater := NewPeriodicCoinsUpdater(3 * time.Second)
+	updater := NewPeriodicUpdater(3 * time.Second)
 
 	time.AfterFunc(10*time.Second, func() {
 		t.Error("Stop() is not stopping the periodic updater")
@@ -30,7 +30,7 @@ func TestPeriodicUpdaterIsStopping(t *testing.T) {
 }
 
 func TestPeriodicUpdaterIsWaitingForTime(t *testing.T) {
-	var updater = NewPeriodicCoinsUpdater(2 * time.Second)
+	var updater = NewPeriodicUpdater(2 * time.Second)
 
 	var startLoop = time.Now()
 
@@ -44,7 +44,7 @@ func TestPeriodicUpdaterIsWaitingForTime(t *testing.T) {
 }
 
 func TestPeriodicUpdaterChangesInterval(t *testing.T) {
-	var updater = NewPeriodicCoinsUpdater(2 * time.Second)
+	var updater = NewPeriodicUpdater(2 * time.Second)
 
 	<-updater.Channel()
 
