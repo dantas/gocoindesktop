@@ -10,9 +10,13 @@ func TestPeriodicUpdaterIsStopping(t *testing.T) {
 
 	updater := NewPeriodicUpdater(3 * time.Second)
 
+	isStopped := false
+
 	time.AfterFunc(10*time.Second, func() {
-		t.Error("Stop() is not stopping the periodic updater")
-		close(quitChan)
+		if !isStopped {
+			t.Error("Stop() is not stopping the periodic updater")
+			close(quitChan)
+		}
 	})
 
 	time.AfterFunc(6*time.Second, func() {
@@ -23,6 +27,7 @@ func TestPeriodicUpdaterIsStopping(t *testing.T) {
 		for coin := range updater.Channel() {
 			coin.Value = coin.Value * 1 // Doing nothing
 		}
+		isStopped = true
 		close(quitChan)
 	}()
 
