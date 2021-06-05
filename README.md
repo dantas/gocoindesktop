@@ -11,4 +11,4 @@ I'm using three different libraries to reach this goal, two of which I had to mo
 
 I thought about using Wire for dependency injection but since the application is supposed to be simple perhaps its better to create the composition root manually. More on that later.
 
-Develop is on master because I'm the only sheriff on this town
+Development is on master because I'm the only sheriff in this town
