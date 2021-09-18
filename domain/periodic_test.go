@@ -1,4 +1,4 @@
-package coindesktop
+package domain
 
 import (
 	"testing"
@@ -25,7 +25,7 @@ func TestPeriodicUpdaterIsStopping(t *testing.T) {
 
 	go func() {
 		for coin := range updater.Channel() {
-			coin.Value = coin.Value * 1 // Doing nothing
+			coin.Price = coin.Price * 1 // Doing nothing
 		}
 		isStopped = true
 		close(quitChan)

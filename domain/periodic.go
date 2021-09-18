@@ -1,27 +1,25 @@
-package coindesktop
+package domain
 
 import (
 	"time"
-
-	"github.com/dantas/gocoindesktop/internal/scrapper"
 )
 
 type PeriodicUpdater interface {
-	Channel() <-chan scrapper.Coin
+	Channel() <-chan Coin
 	SetInterval(interval time.Duration)
 	Stop()
 }
 
 type periodicUpdater struct {
 	timer   *time.Timer
-	channel chan scrapper.Coin
+	channel chan Coin
 	enabled bool
 }
 
 func NewPeriodicUpdater(interval time.Duration) PeriodicUpdater {
 	updater := periodicUpdater{
 		timer:   time.NewTimer(interval),
-		channel: make(chan scrapper.Coin),
+		channel: make(chan Coin),
 		enabled: true,
 	}
 
@@ -31,7 +29,7 @@ func NewPeriodicUpdater(interval time.Duration) PeriodicUpdater {
 
 			<-updater.timer.C
 
-			var coin scrapper.Coin // Scan
+			var coin Coin // Scan
 
 			updater.channel <- coin
 		}
@@ -43,7 +41,7 @@ func NewPeriodicUpdater(interval time.Duration) PeriodicUpdater {
 	return &updater
 }
 
-func (u *periodicUpdater) Channel() <-chan scrapper.Coin {
+func (u *periodicUpdater) Channel() <-chan Coin {
 	return u.channel
 }
 
