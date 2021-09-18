@@ -23,8 +23,7 @@ func ScrapCoinMarketCap(done <-chan interface{}) <-chan domain.Coin {
 
 		collector.OnResponse(func(r *colly.Response) {
 			// sleep one second to ensure javascript has time to update the listing
-			var d, _ = time.ParseDuration("1s")
-			time.Sleep(d)
+			time.Sleep(1 * time.Second)
 		})
 
 		isActive := true
