@@ -9,8 +9,6 @@ func TestCoinMarketCap(t *testing.T) {
 
 	scrapChannel := ScrapCoinMarketCap(done)
 
-	close(done)
-
 	for coin := range scrapChannel {
 		t.Logf("Coin %s : %f\n", coin.Name, coin.Price)
 	}

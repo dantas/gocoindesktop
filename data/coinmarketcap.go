@@ -1,7 +1,6 @@
 package data
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -32,8 +31,6 @@ func ScrapCoinMarketCap(done <-chan interface{}) <-chan domain.Coin {
 			if !isActive {
 				return
 			}
-
-			fmt.Println("Scrapping")
 
 			scrappedName := e.ChildAttr("a", "title")
 			scrappedPrice := e.ChildText(`td:nth-child(5) a`)
