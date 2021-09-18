@@ -1,6 +1,6 @@
-package scrapper
+package domain
 
 type Coin struct {
 	Name  string
-	Value float64
+	Price float64
 }

@@ -1,4 +1,4 @@
-package coindesktop
+package data
 
 import (
 	"encoding/json"

@@ -1,4 +1,4 @@
-package coindesktop
+package data
 
 import (
 	"fmt"
@@ -6,13 +6,13 @@ import (
 )
 
 func TestPersistance(t *testing.T) {
-	if e := SetPeriodicInterval(666); e != nil {
+	if e := SetPeriodicInterval(23); e != nil {
 		t.Fatal(e)
 	}
 
 	value := GetPeriodicInterval()
 
-	if value != 666 {
+	if value != 23 {
 		t.Error("Error reading file from storage")
 	}
 
