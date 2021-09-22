@@ -48,8 +48,3 @@ require (
 	google.golang.org/protobuf v1.24.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
-
-replace (
-	fyne.io/fyne/v2 v2.0.3 => github.com/dantas/fyne/v2 v2.0.4-0.20210529211031-9bfde19a0d95
-	github.com/getlantern/systray v1.1.0 => github.com/dantas/systray v1.1.1-0.20210526043731-4b434817eab3
-)
