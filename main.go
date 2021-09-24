@@ -3,65 +3,51 @@ package main
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/widget"
+	"github.com/dantas/gocoindesktop/ui"
 	"github.com/getlantern/systray"
-	"github.com/getlantern/systray/example/icon"
 )
 
-var window fyne.Window = nil
-
 func main() {
-	// var result = scrapper.Scrap()
+	app := app.New()
 
-	// for _, c := range result {
-	// 	fmt.Printf("%s : %.2f\n", c.Name, c.Value)
-	// }
+	configureSystray(app)
 
-	application := app.New()
-
-	window = application.NewWindow("Hello")
-
-	hello := widget.NewLabel("Hello Fyne!")
-
-	// tabs := container.NewAppTabs()
-
-	// w.SetContent(container.NewVBox(
-	// 	hello,
-	// 	widget.NewButton("Hi!", func() {
-	// 		hello.SetText("Welcome :)")
-	// 	}),
-	// ))
-
-	// TODO Test without calling this
-	application.Driver().ExecuteEveryLoop(systray.RunOnce)
-
-	window.SetContent(hello)
-
-	systray.Register(nil, nil)
-
-	onSystrayReady(application)
-
-	window.ShowAndRun()
+	mainLoop(app)
 }
 
-func onSystrayReady(app fyne.App) {
-	systray.AddMenuItem("Settings", "Open settings")
+func configureSystray(app fyne.App) {
+	systray.SetTitle("Go Coin Deskop") // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
+	systray.SetTooltip("Go Coin Deskop")
+	systray.SetIcon(ui.Icon)
 
-	// systray.SetIcon(icon.Data)
-	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
-
-	// Sets the icon of a menu item. Only available on Mac and Windows.
-	mQuit.SetIcon(icon.Data)
+	openApplicationItem := systray.AddMenuItem("Open application", "Open application")
+	openSettingsItem := systray.AddMenuItem("Open settings", "Open settings")
+	systray.AddSeparator()
+	quitItem := systray.AddMenuItem("Quit", "Quit")
 
 	go func() {
-		// for i <- mQuit.ClickedCh {
-
-		// }
 		for {
 			select {
-			case <-mQuit.ClickedCh:
-				app.Quit()
+			case <-openApplicationItem.ClickedCh:
+				ui.OpenApplication(app)
+			case <-openSettingsItem.ClickedCh:
+				ui.OpenSettings()
+			case <-quitItem.ClickedCh:
+				quit(app)
 			}
 		}
 	}()
+}
+
+func mainLoop(app fyne.App) {
+	go func() {
+		systray.Run(nil, nil)
+	}()
+
+	app.Run()
+}
+
+func quit(app fyne.App) {
+	systray.Quit()
+	app.Quit()
 }
