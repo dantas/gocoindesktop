@@ -9,13 +9,8 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-/*
-	TODO:
-	- Return errors
-	- Filter by name
-*/
-func ScrapCoinMarketCap(done <-chan interface{}) <-chan domain.Coin {
-	coinChannel := make(chan domain.Coin)
+func CoinMarketCapScrapper(done <-chan interface{}) <-chan domain.ScrapResult {
+	resultChannel := make(chan domain.ScrapResult)
 
 	go func() {
 		collector := colly.NewCollector()
@@ -32,25 +27,29 @@ func ScrapCoinMarketCap(done <-chan interface{}) <-chan domain.Coin {
 				return
 			}
 
+			var result domain.ScrapResult
+
 			scrappedName := e.ChildAttr("a", "title")
 			scrappedPrice := e.ChildText(`td:nth-child(5) a`)
 
 			sanitizedPrice := strings.Replace(scrappedPrice[1:], ",", "", -1)
 			priceFloat, error := strconv.ParseFloat(sanitizedPrice, 64)
 			if error != nil {
-				panic(error)
-			}
-
-			coin := domain.Coin{
-				Name:  scrappedName,
-				Price: priceFloat,
+				result = domain.ScrapResult{Error: error}
+			} else {
+				result = domain.ScrapResult{
+					Coin: domain.Coin{
+						Name:  scrappedName,
+						Price: priceFloat,
+					},
+				}
 			}
 
 			select {
-			case coinChannel <- coin:
+			case resultChannel <- result:
 				break
 			case <-done:
-				close(coinChannel)
+				close(resultChannel)
 				isActive = false
 				break
 			}
@@ -58,8 +57,22 @@ func ScrapCoinMarketCap(done <-chan interface{}) <-chan domain.Coin {
 
 		collector.OnScraped(func(r *colly.Response) {
 			if isActive {
-				close(coinChannel)
+				close(resultChannel)
 			}
+		})
+
+		collector.OnError(func(r *colly.Response, e error) {
+			if !isActive {
+				return
+			}
+
+			isActive = false
+
+			resultChannel <- domain.ScrapResult{
+				Error: e,
+			}
+
+			close(resultChannel)
 		})
 
 		collector.Visit("https://coinmarketcap.com/all/views/all/")
@@ -67,5 +80,5 @@ func ScrapCoinMarketCap(done <-chan interface{}) <-chan domain.Coin {
 		collector.Wait()
 	}()
 
-	return coinChannel
+	return resultChannel
 }
