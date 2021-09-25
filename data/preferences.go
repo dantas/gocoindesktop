@@ -2,54 +2,60 @@ package data
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"time"
+
+	"github.com/dantas/gocoindesktop/domain"
 )
 
 const fileName = "preferences.json"
-const defaultInterval = 5 * time.Minute
 
-type preferencesFormat struct {
+type fileFormat struct {
 	Interval int64
 }
 
-func GetPeriodicInterval() time.Duration {
-	var file *os.File
-	var e error
-
-	if file, e = os.Open(fileName); e != nil {
-		return defaultInterval
-	}
-
-	defer file.Close()
-
-	var decoded preferencesFormat
-
-	decoder := json.NewDecoder(file)
-	if e = decoder.Decode(&decoded); e != nil {
-		return defaultInterval
-	}
-
-	return time.Duration(decoded.Interval)
-}
-
-func SetPeriodicInterval(duration time.Duration) error {
+func SavePreferences(pref domain.Preferences) error {
 	var file *os.File
 	var e error
 
 	if file, e = os.Create(fileName); e != nil {
-		return fmt.Errorf("error opening preferences file %w", e)
+		return domain.ErrSavingPreferences
 	}
 
-	decoded := preferencesFormat{
-		Interval: int64(duration),
+	defer file.Close()
+
+	decoded := fileFormat{
+		Interval: int64(pref.Interval),
 	}
 
 	encoder := json.NewEncoder(file)
+
 	if e := encoder.Encode(&decoded); e != nil {
 		return e
 	}
 
 	return nil
+}
+
+func LoadPreferences() (domain.Preferences, error) {
+	var file *os.File
+	var e error
+
+	if file, e = os.Open(fileName); e != nil {
+		return domain.DefaultPreferences, domain.ErrLoadingPreferences
+	}
+
+	defer file.Close()
+
+	var decoded fileFormat
+
+	decoder := json.NewDecoder(file)
+
+	if e = decoder.Decode(&decoded); e != nil {
+		return domain.DefaultPreferences, domain.ErrLoadingPreferences
+	}
+
+	return domain.Preferences{
+		Interval: time.Duration(decoded.Interval),
+	}, nil
 }
