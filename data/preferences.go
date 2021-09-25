@@ -19,7 +19,7 @@ func SavePreferences(pref domain.Preferences) error {
 	var e error
 
 	if file, e = os.Create(fileName); e != nil {
-		return domain.ErrSavingPreferences
+		return e
 	}
 
 	defer file.Close()
@@ -42,7 +42,7 @@ func LoadPreferences() (domain.Preferences, error) {
 	var e error
 
 	if file, e = os.Open(fileName); e != nil {
-		return domain.DefaultPreferences, domain.ErrLoadingPreferences
+		return domain.DefaultPreferences, e
 	}
 
 	defer file.Close()
@@ -52,7 +52,7 @@ func LoadPreferences() (domain.Preferences, error) {
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return domain.DefaultPreferences, domain.ErrLoadingPreferences
+		return domain.DefaultPreferences, e
 	}
 
 	return domain.Preferences{

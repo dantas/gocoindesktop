@@ -7,7 +7,7 @@ import (
 	"github.com/dantas/gocoindesktop/domain"
 )
 
-func TestPersistance(t *testing.T) {
+func TestPreferencesAreCorrectlySavedAndLoaded(t *testing.T) {
 	preference := domain.Preferences{
 		Interval: 3 * time.Hour,
 	}
