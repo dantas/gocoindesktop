@@ -32,11 +32,17 @@ func NewScrapperTicker(scrapper Scrapper, interval time.Duration) ScrapperTicker
 			case <-tmScrapper.ticker.C:
 				coins := make([]Coin, 0)
 
-				for c := range scrapper(tmScrapper.done) {
-					coins = append(coins, c)
+				for result := range scrapper(tmScrapper.done) {
+					// We operate on best effort, we attempt to collect any coin available
+					if result.Error == nil {
+						coins = append(coins, result.Coin)
+					}
 				}
 
-				tmScrapper.channel <- coins
+				// Only bother caller if we got any coin
+				if len(coins) > 0 {
+					tmScrapper.channel <- coins
+				}
 			}
 
 		}
