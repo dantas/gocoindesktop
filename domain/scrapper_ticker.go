@@ -17,7 +17,7 @@ type scrapperTicker struct {
 }
 
 func NewScrapperTicker(scrapper Scrapper, interval time.Duration) ScrapperTicker {
-	tmScrapper := scrapperTicker{
+	ticker := scrapperTicker{
 		done:    make(chan interface{}),
 		ticker:  time.NewTicker(interval),
 		channel: make(chan []Coin),
@@ -26,29 +26,18 @@ func NewScrapperTicker(scrapper Scrapper, interval time.Duration) ScrapperTicker
 	go func() {
 		for {
 			select {
-			case <-tmScrapper.done:
-				close(tmScrapper.channel)
+			case <-ticker.done:
+				close(ticker.channel)
 				return
-			case <-tmScrapper.ticker.C:
-				coins := make([]Coin, 0)
-
-				for result := range scrapper(tmScrapper.done) {
-					// We operate on best effort, we attempt to collect any coin available
-					if result.Error == nil {
-						coins = append(coins, result.Coin)
-					}
-				}
-
-				// Only bother caller if we got any coin
-				if len(coins) > 0 {
-					tmScrapper.channel <- coins
-				}
+			case <-ticker.ticker.C:
+				resultsChannel := scrapper(ticker.done)
+				coins := CollectScrapperResults(resultsChannel)
+				ticker.channel <- coins
 			}
-
 		}
 	}()
 
-	return &tmScrapper
+	return &ticker
 }
 
 func (st *scrapperTicker) Channel() <-chan []Coin {
