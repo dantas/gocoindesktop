@@ -4,22 +4,61 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
+	"github.com/dantas/gocoindesktop/domain"
+	"github.com/getlantern/systray"
 )
 
-var window fyne.Window = nil
+type Application struct {
+	application domain.Presenter
+	window      fyne.Window
+}
 
-// Keep reference to this windows somewhere
-func OpenApplication(app fyne.App) {
-	if window == nil {
+func (uiApp Application) ShowSystray() <-chan interface{} {
+	done := make(chan interface{})
 
-		window = app.NewWindow("Hello")
+	systray.SetTitle("Go Coin Deskop") // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
+	systray.SetTooltip("Go Coin Deskop")
+	systray.SetIcon(Icon)
 
-		window.CenterOnScreen()
+	showCoinsItem := systray.AddMenuItem("Show coins", "Show coins")
+	showSettingsItem := systray.AddMenuItem("Show settings", "Show settings")
+	systray.AddSeparator()
+	quitItem := systray.AddMenuItem("Quit", "Quit")
 
-		window.SetCloseIntercept(func() {
-			window.Hide()
-		})
+	go func() {
+		for {
+			select {
+			case <-showCoinsItem.ClickedCh:
+				uiApp.ShowCoins()
+			case <-showSettingsItem.ClickedCh:
+				uiApp.ShowSettings()
+			case <-quitItem.ClickedCh:
+				uiApp.application.Quit()
+				close(done)
+			}
+		}
+	}()
+
+	return done
+}
+
+func (app Application) ShowCoins() {
+	app.window.Show()
+}
+
+func (app Application) ShowSettings() {
+	app.window.Show()
+}
+
+func NewApplication(fyneApp fyne.App, application domain.Presenter) Application {
+	return Application{
+		application: application,
+		window:      createWindow(fyneApp),
 	}
+}
+
+func createWindow(app fyne.App) fyne.Window {
+	window := app.NewWindow("Hello")
 
 	appTabs := container.NewAppTabs(
 		container.NewTabItem("Tab 1", widget.NewLabel("Hello")),
@@ -31,6 +70,13 @@ func OpenApplication(app fyne.App) {
 
 	window.SetContent(appTabs)
 
-	window.Show()
-	// window.Hide()
+	window.CenterOnScreen()
+
+	window.SetCloseIntercept(func() {
+		window.Hide()
+	})
+
+	window.Hide()
+
+	return window
 }
