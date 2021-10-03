@@ -24,7 +24,6 @@ func createSettingsTab(presenter domain.Presenter) *widget.Form {
 }
 
 func createIntervalOption(settings *domain.Settings) *widget.Select {
-
 	options := []string{
 		localization.Settings.UpdateIntervalOptions.OneMin,
 		localization.Settings.UpdateIntervalOptions.TwoMin,
