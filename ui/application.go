@@ -3,6 +3,7 @@ package ui
 import (
 	"fyne.io/fyne/v2"
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/getlantern/systray"
 )
 
@@ -14,14 +15,14 @@ type Application struct {
 func (uiApp Application) ShowSystray() <-chan interface{} {
 	done := make(chan interface{})
 
-	systray.SetTitle("Go Coin Deskop") // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
-	systray.SetTooltip("Go Coin Deskop")
+	systray.SetTitle(localization.Window.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
+	systray.SetTooltip(localization.Window.Title)
 	systray.SetIcon(Icon)
 
-	showCoinsItem := systray.AddMenuItem("Show coins", "Show coins")
-	showSettingsItem := systray.AddMenuItem("Show settings", "Show settings")
+	showCoinsItem := systray.AddMenuItem(localization.Systray.Coins, localization.Systray.Coins)
+	showSettingsItem := systray.AddMenuItem(localization.Systray.Settings, localization.Systray.Settings)
 	systray.AddSeparator()
-	quitItem := systray.AddMenuItem("Quit", "Quit")
+	quitItem := systray.AddMenuItem(localization.Systray.Quit, localization.Systray.Quit)
 
 	go func() {
 		for {

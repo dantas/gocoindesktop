@@ -1,22 +1,21 @@
 package ui
 
 import (
-	"strconv"
-	"strings"
 	"time"
 
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
 func createSettingsTab(presenter domain.Presenter) *widget.Form {
 	settings := presenter.Settings()
 
-	intervalOption := widget.NewFormItem("Update interval", createIntervalOption(&settings))
+	intervalOption := widget.NewFormItem(localization.Settings.UpdateInterval, createIntervalOption(&settings))
 
 	form := widget.NewForm(intervalOption)
 
-	form.SubmitText = "Update"
+	form.SubmitText = localization.Settings.SubmitButton
 	form.OnSubmit = func() {
 		presenter.SetSettings(settings)
 	}
@@ -25,26 +24,47 @@ func createSettingsTab(presenter domain.Presenter) *widget.Form {
 }
 
 func createIntervalOption(settings *domain.Settings) *widget.Select {
-	options := []string{"1 min", "2 min", "5 min", "10 min", "1 hour"}
 
-	onSelected := func(selected string) {
-		pieces := strings.Split(selected, " ")
-
-		var unit time.Duration
-		switch pieces[1] {
-		case "min":
-			unit = time.Minute
-		case "hour":
-			unit = time.Hour
-		}
-
-		durationInt, _ := strconv.Atoi(pieces[0])
-
-		settings.Interval = time.Duration(durationInt) * unit
+	options := []string{
+		localization.Settings.UpdateIntervalOptions.OneMin,
+		localization.Settings.UpdateIntervalOptions.TwoMin,
+		localization.Settings.UpdateIntervalOptions.FiveMin,
+		localization.Settings.UpdateIntervalOptions.TenMin,
+		localization.Settings.UpdateIntervalOptions.OneHour,
 	}
 
-	return widget.NewSelect(
+	onSelected := func(selected string) {
+		switch selected {
+		case localization.Settings.UpdateIntervalOptions.OneMin:
+			settings.Interval = 1 * time.Minute
+		case localization.Settings.UpdateIntervalOptions.TwoMin:
+			settings.Interval = 2 * time.Minute
+		case localization.Settings.UpdateIntervalOptions.FiveMin:
+			settings.Interval = 5 * time.Minute
+		case localization.Settings.UpdateIntervalOptions.TenMin:
+			settings.Interval = 10 * time.Minute
+		case localization.Settings.UpdateIntervalOptions.OneHour:
+			settings.Interval = 1 * time.Hour
+		}
+	}
+
+	selectWidget := widget.NewSelect(
 		options,
 		onSelected,
 	)
+
+	switch settings.Interval {
+	case 1 * time.Minute:
+		selectWidget.SetSelectedIndex(0)
+	case 2 * time.Minute:
+		selectWidget.SetSelectedIndex(1)
+	case 5 * time.Minute:
+		selectWidget.SetSelectedIndex(2)
+	case 10 * time.Minute:
+		selectWidget.SetSelectedIndex(3)
+	case 1 * time.Hour:
+		selectWidget.SetSelectedIndex(4)
+	}
+
+	return selectWidget
 }
