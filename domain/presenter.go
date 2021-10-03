@@ -2,7 +2,7 @@ package domain
 
 type Presenter interface {
 	Coins() <-chan []Coin
-	Settings() (Settings, error)
+	Settings() Settings
 	SetSettings(pref Settings) error
 	Quit()
 }
@@ -41,8 +41,9 @@ func NewPresenter(scrapper Scrapper, prefStorage SettingsStorage) Presenter {
 	return app
 }
 
-func (p presenter) Settings() (Settings, error) {
-	return p.settingsStorage.Load()
+func (p presenter) Settings() Settings {
+	settings, _ := p.settingsStorage.Load()
+	return settings
 }
 
 func (p presenter) Coins() <-chan []Coin {
