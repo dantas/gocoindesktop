@@ -2,15 +2,13 @@ package ui
 
 import (
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/getlantern/systray"
 )
 
 type Application struct {
-	application domain.Presenter
-	window      fyne.Window
+	presenter domain.Presenter
+	window    fyne.Window
 }
 
 func (uiApp Application) ShowSystray() <-chan interface{} {
@@ -33,7 +31,7 @@ func (uiApp Application) ShowSystray() <-chan interface{} {
 			case <-showSettingsItem.ClickedCh:
 				uiApp.ShowSettings()
 			case <-quitItem.ClickedCh:
-				uiApp.application.Quit()
+				uiApp.presenter.Quit()
 				close(done)
 			}
 		}
@@ -50,33 +48,9 @@ func (app Application) ShowSettings() {
 	app.window.Show()
 }
 
-func NewApplication(fyneApp fyne.App, application domain.Presenter) Application {
+func NewApplication(fyneApp fyne.App, presenter domain.Presenter) Application {
 	return Application{
-		application: application,
-		window:      createWindow(fyneApp),
+		presenter: presenter,
+		window:    createWindow(fyneApp, presenter),
 	}
-}
-
-func createWindow(app fyne.App) fyne.Window {
-	window := app.NewWindow("Hello")
-
-	appTabs := container.NewAppTabs(
-		container.NewTabItem("Tab 1", widget.NewLabel("Hello")),
-		container.NewTabItem("Tab 2", widget.NewLabel("World!")),
-	)
-
-	// Um tab para preferencias
-	// Outro tab para grid com resultados, botao de forcar atualizacao
-
-	window.SetContent(appTabs)
-
-	window.CenterOnScreen()
-
-	window.SetCloseIntercept(func() {
-		window.Hide()
-	})
-
-	window.Hide()
-
-	return window
 }
