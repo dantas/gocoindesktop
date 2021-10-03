@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"strconv"
 	"strings"
 	"time"
@@ -9,7 +10,7 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func CoinMarketCapScrapper(done <-chan interface{}) <-chan domain.ScrapResult {
+func CoinMarketCapScrapper(ctx context.Context) <-chan domain.ScrapResult {
 	resultChannel := make(chan domain.ScrapResult)
 
 	go func() {
@@ -48,7 +49,7 @@ func CoinMarketCapScrapper(done <-chan interface{}) <-chan domain.ScrapResult {
 			select {
 			case resultChannel <- result:
 				break
-			case <-done:
+			case <-ctx.Done():
 				close(resultChannel)
 				isActive = false
 				break

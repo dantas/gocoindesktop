@@ -1,6 +1,8 @@
 package domain
 
-type Scrapper func(done <-chan interface{}) <-chan ScrapResult
+import "context"
+
+type Scrapper func(ctx context.Context) <-chan ScrapResult
 
 type ScrapResult struct {
 	Coin  Coin

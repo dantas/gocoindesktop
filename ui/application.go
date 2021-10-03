@@ -1,19 +1,22 @@
 package ui
 
 import (
+	"context"
+
 	"fyne.io/fyne/v2"
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/getlantern/systray"
 )
 
+// This but a mistake to call it application,
 type Application struct {
 	presenter domain.Presenter
 	window    fyne.Window
 }
 
-func (uiApp Application) ShowSystray() <-chan interface{} {
-	done := make(chan interface{})
+func (uiApp Application) ShowSystray() <-chan struct{} {
+	ctx, closeCtx := context.WithCancel(context.Background())
 
 	systray.SetTitle(localization.Window.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
 	systray.SetTooltip(localization.Window.Title)
@@ -33,12 +36,12 @@ func (uiApp Application) ShowSystray() <-chan interface{} {
 				uiApp.ShowSettings()
 			case <-quitItem.ClickedCh:
 				uiApp.presenter.Quit()
-				close(done)
+				closeCtx()
 			}
 		}
 	}()
 
-	return done
+	return ctx.Done()
 }
 
 func (app Application) ShowCoins() {

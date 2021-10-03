@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"time"
 )
 
@@ -11,26 +12,28 @@ type ScrapperTicker interface {
 }
 
 type scrapperTicker struct {
-	done    chan interface{}
-	ticker  *time.Ticker
-	channel chan []Coin
+	cancelCtx context.CancelFunc
+	ticker    *time.Ticker
+	channel   chan []Coin
 }
 
 func NewScrapperTicker(scrapper Scrapper, interval time.Duration) ScrapperTicker {
+	ctx, cancelCtx := context.WithCancel(context.Background())
+
 	ticker := scrapperTicker{
-		done:    make(chan interface{}),
-		ticker:  time.NewTicker(interval),
-		channel: make(chan []Coin),
+		cancelCtx: cancelCtx,
+		ticker:    time.NewTicker(interval),
+		channel:   make(chan []Coin),
 	}
 
 	go func() {
 		for {
 			select {
-			case <-ticker.done:
+			case <-ctx.Done():
 				close(ticker.channel)
 				return
 			case <-ticker.ticker.C:
-				resultsChannel := scrapper(ticker.done)
+				resultsChannel := scrapper(ctx)
 				coins := CollectScrapperResults(resultsChannel)
 				ticker.channel <- coins
 			}
@@ -49,6 +52,6 @@ func (st *scrapperTicker) SetInterval(interval time.Duration) {
 }
 
 func (st *scrapperTicker) Stop() {
-	close(st.done)
+	st.cancelCtx()
 	st.ticker.Stop()
 }
