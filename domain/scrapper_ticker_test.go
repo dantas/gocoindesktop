@@ -1,6 +1,7 @@
 package domain_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -34,21 +35,24 @@ func TestScrapperTicker(t *testing.T) {
 
 	index := 0
 
-	for r := range scrapperTicker.Channel() {
-		if len(r) != 1 {
-			t.Error("Scrapper returning more values than expected")
-		}
+	for coins := range scrapperTicker.Channel() {
+		if index == 1 {
+			if len(coins) != 0 {
+				t.Error("Ticker returned a coin where an error was expected, index", index)
+			}
+		} else {
+			if len(coins) != 1 {
+				t.Errorf("Scrapper returning different amount of values than what is expected %#v\n", coins)
+			}
 
-		if r[0] != results[index].Coin {
-			t.Error("Scrapper didn`t return expected result, index", index)
+			if coins[0] != results[index].Coin {
+				t.Error("Scrapper didn`t return expected result, index", index)
+			}
 		}
 
 		index += 1
 
-		switch index {
-		case 1:
-			index += 1 // Ignore error result
-		case 3:
+		if index == 3 {
 			scrapperTicker.Stop()
 		}
 	}
@@ -57,7 +61,7 @@ func TestScrapperTicker(t *testing.T) {
 func createMockScrapper() domain.Scrapper {
 	index := 0
 
-	mockScrapper := func(done <-chan interface{}) <-chan domain.ScrapResult {
+	mockScrapper := func(context.Context) <-chan domain.ScrapResult {
 		resultChannel := make(chan domain.ScrapResult)
 
 		go func() {
