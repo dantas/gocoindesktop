@@ -9,7 +9,9 @@ type ScrapResult struct {
 	Error error
 }
 
-func CollectScrapperResults(resultsChannel <-chan ScrapResult) []Coin {
+func Scrap(ctx context.Context, scrapper Scrapper) []Coin {
+	resultsChannel := scrapper(ctx)
+
 	coins := make([]Coin, 0)
 
 	for result := range resultsChannel {

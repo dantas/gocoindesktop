@@ -31,11 +31,11 @@ var results = []domain.ScrapResult{
 }
 
 func TestScrapperTicker(t *testing.T) {
-	scrapperTicker := domain.NewScrapperTicker(createMockScrapper(), 1*time.Second)
+	scrapperTicker := domain.NewIntervalScrapper(createMockScrapper(), 1*time.Second)
 
 	index := 0
 
-	for coins := range scrapperTicker.Channel() {
+	for coins := range scrapperTicker.Coins() {
 		if index == 1 {
 			if len(coins) != 0 {
 				t.Error("Ticker returned a coin where an error was expected, index", index)
@@ -53,7 +53,7 @@ func TestScrapperTicker(t *testing.T) {
 		index += 1
 
 		if index == 3 {
-			scrapperTicker.Stop()
+			scrapperTicker.Destroy()
 		}
 	}
 }

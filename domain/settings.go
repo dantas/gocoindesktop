@@ -14,5 +14,5 @@ var DefaultSettings = Settings{
 
 type SettingsStorage interface {
 	Save(Settings) error
-	Load() (Settings, error)
+	Load() (Settings, error) // In case of error must return (Default.Settings, error)
 }
