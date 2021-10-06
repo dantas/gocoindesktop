@@ -34,10 +34,12 @@ func executeScrapPrintResultAndReturnCount(ctx context.Context, t *testing.T) ui
 	scrapChannel := CoinMarketCapScrapper(ctx)
 
 	for result := range scrapChannel {
-		if result.Error != nil {
-			t.Error("Error", result.Error)
+		if len(result.Errors) > 0 {
+			t.Errorf("Errors %v\n", result.Errors)
 		} else {
-			t.Logf("Coin %s : %f\n", result.Coin.Name, result.Coin.Price)
+			for _, coin := range result.Coins {
+				t.Logf("Coin %s : %f\n", coin.Name, coin.Price)
+			}
 			count += 1
 		}
 	}
