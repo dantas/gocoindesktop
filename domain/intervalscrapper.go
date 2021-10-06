@@ -6,7 +6,7 @@ import (
 )
 
 type IntervalScrapper interface {
-	Coins() <-chan []Coin
+	Results() <-chan ScrapResult
 	SetInterval(interval time.Duration)
 	Destroy()
 }
@@ -14,51 +14,51 @@ type IntervalScrapper interface {
 type implIntervalScrapper struct {
 	cancelCtx context.CancelFunc
 	ticker    *time.Ticker
-	channel   chan []Coin
+	results   chan ScrapResult
 }
 
 func NewIntervalScrapper(scrapper Scrapper, interval time.Duration) IntervalScrapper {
 	ctx, cancelCtx := context.WithCancel(context.Background())
 
-	perScrapper := implIntervalScrapper{
+	intScrapper := implIntervalScrapper{
 		cancelCtx: cancelCtx,
 		ticker:    time.NewTicker(interval),
-		channel:   make(chan []Coin),
+		results:   make(chan ScrapResult),
 	}
 
 	go func() {
-		perScrapper.channel <- Scrap(ctx, scrapper)
+		intScrapper.results <- <-scrapper(ctx)
 	}()
 
 	go func() {
 		for {
 			select {
 			case <-ctx.Done():
-				close(perScrapper.channel)
+				close(intScrapper.results)
 				return
-			case <-perScrapper.ticker.C:
-				perScrapper.channel <- Scrap(ctx, scrapper)
+			case <-intScrapper.ticker.C:
+				intScrapper.results <- <-scrapper(ctx)
 			}
 		}
 	}()
 
-	return &perScrapper
+	return &intScrapper
 }
 
-func (isc *implIntervalScrapper) Coins() <-chan []Coin {
-	return isc.channel
+func (is *implIntervalScrapper) Results() <-chan ScrapResult {
+	return is.results
 }
 
-func (isc *implIntervalScrapper) SetInterval(interval time.Duration) {
-	if isc.ticker != nil {
-		isc.ticker.Reset(interval)
+func (is *implIntervalScrapper) SetInterval(interval time.Duration) {
+	if is.ticker != nil {
+		is.ticker.Reset(interval)
 	}
 }
 
-func (isc *implIntervalScrapper) Destroy() {
-	isc.cancelCtx()
-	if isc.ticker != nil {
-		isc.ticker.Stop()
-		isc.ticker = nil
+func (is *implIntervalScrapper) Destroy() {
+	is.cancelCtx()
+	if is.ticker != nil {
+		is.ticker.Stop()
+		is.ticker = nil
 	}
 }
