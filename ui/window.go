@@ -20,6 +20,19 @@ func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 	window.SetCloseIntercept(window.Hide)
 	window.CenterOnScreen()
 
+	go func() {
+		for event := range presenter.Events() {
+			switch event {
+			case EVENT_SHOW_COINS:
+				window.Show()
+				appTabs.SelectTabIndex(0)
+			case EVENT_SHOW_SETTINGS:
+				window.Show()
+				appTabs.SelectTabIndex(1)
+			}
+		}
+	}()
+
 	// TODO SHOW HIDE DEPENDING ON SETTINGS
 	window.Show()
 

@@ -38,9 +38,9 @@ func (uiApp Application) ShowSystray() <-chan struct{} {
 		for {
 			select {
 			case <-showCoinsItem.ClickedCh:
-				uiApp.ShowCoins()
+				uiApp.presenter.OnSystrayClickCoins()
 			case <-showSettingsItem.ClickedCh:
-				uiApp.ShowSettings()
+				uiApp.presenter.OnSystrayClickSettings()
 			case <-quitItem.ClickedCh:
 				uiApp.presenter.Quit()
 				closeCtx()
@@ -49,12 +49,4 @@ func (uiApp Application) ShowSystray() <-chan struct{} {
 	}()
 
 	return ctx.Done()
-}
-
-func (app Application) ShowCoins() {
-	app.window.Show() // TODO: Redirect to presenter
-}
-
-func (app Application) ShowSettings() {
-	app.window.Show() // TODO: Redirect to presenter
 }
