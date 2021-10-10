@@ -8,57 +8,66 @@ import (
 type IntervalScrapper interface {
 	Results() <-chan ScrapResult
 	SetInterval(interval time.Duration)
-	Destroy()
+	Stop()
 }
 
-type implIntervalScrapper struct {
-	cancelCtx context.CancelFunc
-	ticker    *time.Ticker
-	results   chan ScrapResult
+type intervalScrapper struct {
+	ctx         context.Context
+	cancelCtx   context.CancelFunc
+	scrapper    Scrapper
+	ticker      *time.Ticker
+	chanResults chan ScrapResult
 }
 
 func NewIntervalScrapper(scrapper Scrapper, interval time.Duration) IntervalScrapper {
-	ctx, cancelCtx := context.WithCancel(context.Background())
-
-	intScrapper := implIntervalScrapper{
-		cancelCtx: cancelCtx,
-		ticker:    time.NewTicker(interval),
-		results:   make(chan ScrapResult),
+	isc := intervalScrapper{
+		ctx:         nil,
+		cancelCtx:   nil,
+		scrapper:    scrapper,
+		ticker:      time.NewTicker(interval),
+		chanResults: make(chan ScrapResult),
 	}
 
+	isc.start()
+
 	go func() {
-		intScrapper.results <- <-scrapper(ctx)
+		isc.executeScrapper()
 	}()
+
+	return &isc
+}
+
+func (isc *intervalScrapper) start() {
+	isc.ctx, isc.cancelCtx = context.WithCancel(context.Background())
 
 	go func() {
 		for {
 			select {
-			case <-ctx.Done():
-				close(intScrapper.results)
+			case <-isc.ctx.Done():
+				close(isc.chanResults)
 				return
-			case <-intScrapper.ticker.C:
-				intScrapper.results <- <-scrapper(ctx)
+			case <-isc.ticker.C:
+				isc.executeScrapper()
 			}
 		}
 	}()
-
-	return &intScrapper
 }
 
-func (is *implIntervalScrapper) Results() <-chan ScrapResult {
-	return is.results
+func (isc *intervalScrapper) executeScrapper() {
+	isc.chanResults <- <-isc.scrapper.Scrap(isc.ctx)
 }
 
-func (is *implIntervalScrapper) SetInterval(interval time.Duration) {
-	if is.ticker != nil {
-		is.ticker.Reset(interval)
-	}
+func (isc *intervalScrapper) Results() <-chan ScrapResult {
+	return isc.chanResults
 }
 
-func (is *implIntervalScrapper) Destroy() {
-	is.cancelCtx()
-	if is.ticker != nil {
-		is.ticker.Stop()
-		is.ticker = nil
-	}
+func (isc *intervalScrapper) SetInterval(interval time.Duration) {
+	isc.Stop()
+	isc.ticker.Reset(interval)
+	isc.start()
+}
+
+func (isc *intervalScrapper) Stop() {
+	isc.ticker.Stop()
+	isc.cancelCtx()
 }

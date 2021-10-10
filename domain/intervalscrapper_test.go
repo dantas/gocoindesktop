@@ -2,7 +2,7 @@ package domain_test
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"reflect"
 	"testing"
 	"time"
@@ -10,7 +10,7 @@ import (
 	"github.com/dantas/gocoindesktop/domain"
 )
 
-var results = []domain.ScrapResult{
+var scrapResults = []domain.ScrapResult{
 	{
 		Coins: []domain.Coin{
 			{
@@ -18,7 +18,7 @@ var results = []domain.ScrapResult{
 				Price: 12,
 			},
 			{
-				Name:  "Second Coin",
+				Name:  "Answer Coin",
 				Price: 42,
 			},
 			{
@@ -26,51 +26,64 @@ var results = []domain.ScrapResult{
 				Price: 69,
 			},
 		},
-		Errors: []error{},
+		Error: nil,
 	},
 	{
 		Coins: []domain.Coin{},
-		Errors: []error{
-			fmt.Errorf("first tragic error"),
-			fmt.Errorf("second tragic error"),
-		},
+		Error: errors.New("tragic error"),
 	},
 }
 
 func TestIntervalScrapper(t *testing.T) {
-	intervalScrapper := domain.NewIntervalScrapper(createMockScrapper(), 1*time.Second)
+	scrapper := domain.NewScrapper(createCoinMockSource())
+	intervalScrapper := domain.NewIntervalScrapper(scrapper, 1*time.Second)
 
 	index := 0
 
 	for result := range intervalScrapper.Results() {
-		if !reflect.DeepEqual(result, results[index]) {
-			t.Errorf("Returned result is different from what is expected %v\n", result)
+		if !reflect.DeepEqual(result.Coins, scrapResults[index].Coins) {
+			t.Errorf("Returned result is different from what is expected %v != %v\n", result, scrapResults[index])
+		}
+
+		if !errors.Is(result.Error, scrapResults[index].Error) {
+			t.Errorf("Returned error is different from what is expected %v != %v\n", result.Error, scrapResults[index].Error)
 		}
 
 		index += 1
 
-		if index == len(results) {
-			intervalScrapper.Destroy()
+		if index == len(scrapResults) {
+			intervalScrapper.Stop()
 		}
 	}
 }
 
-func createMockScrapper() domain.Scrapper {
-	index := 0
+func createCoinMockSource() domain.CoinSource {
+	scrapResultIndex := 0
 
-	mockScrapper := func(context.Context) <-chan domain.ScrapResult {
-		resultChannel := make(chan domain.ScrapResult)
+	coinSource := func(context.Context) <-chan domain.CoinSourceResult {
+		coinSourceResultChannel := make(chan domain.CoinSourceResult)
 
 		go func() {
-			resultChannel <- results[index]
+			for _, coin := range scrapResults[scrapResultIndex].Coins {
+				coinSourceResultChannel <- domain.CoinSourceResult{
+					Coin: coin,
+				}
+			}
 
-			index += 1
+			err := scrapResults[scrapResultIndex].Error
+			if err != nil {
+				coinSourceResultChannel <- domain.CoinSourceResult{
+					Error: err,
+				}
+			}
 
-			close(resultChannel)
+			scrapResultIndex += 1
+
+			close(coinSourceResultChannel)
 		}()
 
-		return resultChannel
+		return coinSourceResultChannel
 	}
 
-	return mockScrapper
+	return coinSource
 }
