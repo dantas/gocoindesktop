@@ -8,7 +8,7 @@ import (
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
-func createSettingsTab(presenter domain.Presenter) *widget.Form {
+func createSettingsTab(presenter Presenter) *widget.Form {
 	settings := presenter.Settings()
 
 	intervalOption := widget.NewFormItem(localization.Settings.UpdateInterval, createIntervalOption(&settings))

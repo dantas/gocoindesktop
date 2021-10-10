@@ -3,16 +3,11 @@ package ui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
-func createWindow(app fyne.App, presenter domain.Presenter) fyne.Window {
+func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 	window := app.NewWindow(localization.Window.Title)
-
-	window.SetCloseIntercept(func() {
-		window.Hide()
-	})
 
 	appTabs := container.NewAppTabs(
 		container.NewTabItem(localization.Window.TabCoins, createCoinsTab(presenter)),
@@ -22,8 +17,10 @@ func createWindow(app fyne.App, presenter domain.Presenter) fyne.Window {
 	window.SetContent(appTabs)
 
 	window.Resize(fyne.NewSize(300, 200))
+	window.SetCloseIntercept(window.Hide)
 	window.CenterOnScreen()
 
+	// TODO SHOW HIDE DEPENDING ON SETTINGS
 	window.Show()
 
 	return window

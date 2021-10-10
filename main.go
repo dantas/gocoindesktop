@@ -14,8 +14,11 @@ func main() {
 
 	// Our little composition root
 	settingsStorage := data.NewFileSettingsStorage("settings.json")
-	presenter := domain.NewPresenter(data.CoinMarketCapScrapper, settingsStorage)
-	application := ui.NewApplication(fyneApp, presenter)
+	scrapper := domain.NewScrapper(data.CoinMarketCapSource)
+	settings, _ := settingsStorage.Load() // TODO: THIS IS FUCKED UP
+	intervalScrapper := domain.NewIntervalScrapper(scrapper, settings.Interval)
+	presenter := ui.NewPresenter(intervalScrapper, settingsStorage)
+	application := NewApplication(fyneApp, presenter)
 
 	go func() {
 		<-application.ShowSystray()

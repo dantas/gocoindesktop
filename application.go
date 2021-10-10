@@ -1,18 +1,25 @@
-package ui
+package main
 
 import (
 	"context"
 
 	"fyne.io/fyne/v2"
-	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/ui"
 	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/getlantern/systray"
 )
 
-// This but a mistake to call it application,
+// TODO: Improve name
 type Application struct {
-	presenter domain.Presenter
+	presenter ui.Presenter
 	window    fyne.Window
+}
+
+func NewApplication(fyneApp fyne.App, presenter ui.Presenter) Application {
+	return Application{
+		presenter: presenter,
+		window:    ui.CreateWindow(fyneApp, presenter),
+	}
 }
 
 func (uiApp Application) ShowSystray() <-chan struct{} {
@@ -20,7 +27,7 @@ func (uiApp Application) ShowSystray() <-chan struct{} {
 
 	systray.SetTitle(localization.Window.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
 	systray.SetTooltip(localization.Window.Title)
-	systray.SetIcon(Icon)
+	systray.SetIcon(ui.Icon)
 
 	showCoinsItem := systray.AddMenuItem(localization.Systray.Coins, localization.Systray.Coins)
 	showSettingsItem := systray.AddMenuItem(localization.Systray.Settings, localization.Systray.Settings)
@@ -45,16 +52,9 @@ func (uiApp Application) ShowSystray() <-chan struct{} {
 }
 
 func (app Application) ShowCoins() {
-	app.window.Show()
+	app.window.Show() // TODO: Redirect to presenter
 }
 
 func (app Application) ShowSettings() {
-	app.window.Show()
-}
-
-func NewApplication(fyneApp fyne.App, presenter domain.Presenter) Application {
-	return Application{
-		presenter: presenter,
-		window:    createWindow(fyneApp, presenter),
-	}
+	app.window.Show() // TODO: Redirect to presenter
 }
