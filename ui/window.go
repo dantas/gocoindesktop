@@ -21,12 +21,12 @@ func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 	window.CenterOnScreen()
 
 	go func() {
-		for event := range presenter.Events() {
+		for event := range presenter.ShowEvents() {
 			switch event {
-			case EVENT_SHOW_COINS:
+			case PRESENTER_SHOW_COINS:
 				window.Show()
 				appTabs.SelectTabIndex(0)
-			case EVENT_SHOW_SETTINGS:
+			case PRESENTER_SHOW_SETTINGS:
 				window.Show()
 				appTabs.SelectTabIndex(1)
 			}

@@ -4,11 +4,11 @@ import (
 	"github.com/dantas/gocoindesktop/domain"
 )
 
-type PresenterEvent int
+type PresenterShowEvent int
 
 const (
-	EVENT_SHOW_COINS    = 0
-	EVENT_SHOW_SETTINGS = iota
+	PRESENTER_SHOW_COINS    = 0
+	PRESENTER_SHOW_SETTINGS = iota
 )
 
 // TODO: UI/APP Behavior go first to presenter, which will emit events to the UI layer
@@ -17,14 +17,14 @@ const (
 type Presenter struct {
 	intervalScrapper domain.IntervalScrapper
 	settingsStorage  domain.SettingsStorage
-	events           chan PresenterEvent
+	events           chan PresenterShowEvent
 }
 
 func NewPresenter(intervalScrapper domain.IntervalScrapper, settingsStorage domain.SettingsStorage) Presenter {
 	presenter := Presenter{
 		intervalScrapper: intervalScrapper,
 		settingsStorage:  settingsStorage,
-		events:           make(chan PresenterEvent),
+		events:           make(chan PresenterShowEvent),
 	}
 
 	return presenter
@@ -34,16 +34,16 @@ func (p Presenter) ScrapResults() <-chan domain.ScrapResult {
 	return p.intervalScrapper.Results()
 }
 
-func (p Presenter) Events() <-chan PresenterEvent {
+func (p Presenter) ShowEvents() <-chan PresenterShowEvent {
 	return p.events
 }
 
 func (p Presenter) OnSystrayClickCoins() {
-	p.events <- EVENT_SHOW_COINS
+	p.events <- PRESENTER_SHOW_COINS
 }
 
 func (p Presenter) OnSystrayClickSettings() {
-	p.events <- EVENT_SHOW_SETTINGS
+	p.events <- PRESENTER_SHOW_SETTINGS
 }
 
 func (p Presenter) Settings() domain.Settings {
