@@ -4,26 +4,25 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2/widget"
-	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
 func createSettingsTab(presenter Presenter) *widget.Form {
 	settings := presenter.Settings()
 
-	intervalOption := widget.NewFormItem(localization.Settings.UpdateInterval, createIntervalOption(&settings))
+	intervalOption := widget.NewFormItem(localization.Settings.UpdateInterval, createIntervalOption(&settings.Interval))
 
 	form := widget.NewForm(intervalOption)
 
 	form.SubmitText = localization.Settings.SubmitButton
 	form.OnSubmit = func() {
-		presenter.SetSettings(settings)
+		presenter.SetInterval(settings.Interval)
 	}
 
 	return form
 }
 
-func createIntervalOption(settings *domain.Settings) *widget.Select {
+func createIntervalOption(interval *time.Duration) *widget.Select {
 	options := []string{
 		localization.Settings.UpdateIntervalOptions.OneMin,
 		localization.Settings.UpdateIntervalOptions.TwoMin,
@@ -35,15 +34,15 @@ func createIntervalOption(settings *domain.Settings) *widget.Select {
 	onSelected := func(selected string) {
 		switch selected {
 		case localization.Settings.UpdateIntervalOptions.OneMin:
-			settings.Interval = 1 * time.Minute
+			*interval = 1 * time.Minute
 		case localization.Settings.UpdateIntervalOptions.TwoMin:
-			settings.Interval = 2 * time.Minute
+			*interval = 2 * time.Minute
 		case localization.Settings.UpdateIntervalOptions.FiveMin:
-			settings.Interval = 5 * time.Minute
+			*interval = 5 * time.Minute
 		case localization.Settings.UpdateIntervalOptions.TenMin:
-			settings.Interval = 10 * time.Minute
+			*interval = 10 * time.Minute
 		case localization.Settings.UpdateIntervalOptions.OneHour:
-			settings.Interval = 1 * time.Hour
+			*interval = 1 * time.Hour
 		}
 	}
 
@@ -52,7 +51,7 @@ func createIntervalOption(settings *domain.Settings) *widget.Select {
 		onSelected,
 	)
 
-	switch settings.Interval {
+	switch *interval {
 	case 1 * time.Minute:
 		selectWidget.SetSelectedIndex(0)
 	case 2 * time.Minute:

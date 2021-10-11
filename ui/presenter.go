@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"time"
+
 	"github.com/dantas/gocoindesktop/domain"
 )
 
@@ -51,7 +53,18 @@ func (p Presenter) Settings() domain.Settings {
 	return settings
 }
 
-func (p Presenter) SetSettings(settings domain.Settings) error {
+func (p Presenter) SetInterval(interval time.Duration) error {
+	settings := p.Settings()
+	settings.Interval = interval
+	return p.saveSettings(settings)
+}
+
+func (p Presenter) Quit() {
+	close(p.events)
+	p.intervalScrapper.Stop()
+}
+
+func (p Presenter) saveSettings(settings domain.Settings) error {
 	if e := p.settingsStorage.Save(settings); e != nil {
 		return e
 	}
@@ -59,9 +72,4 @@ func (p Presenter) SetSettings(settings domain.Settings) error {
 	p.intervalScrapper.SetInterval(settings.Interval)
 
 	return nil
-}
-
-func (p Presenter) Quit() {
-	close(p.events)
-	p.intervalScrapper.Stop()
 }
