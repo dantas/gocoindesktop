@@ -52,7 +52,7 @@ func TestIntervalScrapper(t *testing.T) {
 		index += 1
 
 		if index == len(scrapResults) {
-			intervalScrapper.Stop()
+			intervalScrapper.Destroy()
 		}
 	}
 }

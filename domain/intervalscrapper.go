@@ -8,7 +8,7 @@ import (
 type IntervalScrapper interface {
 	Results() <-chan ScrapResult
 	SetInterval(interval time.Duration)
-	Stop()
+	Destroy()
 }
 
 type intervalScrapper struct {
@@ -20,25 +20,15 @@ type intervalScrapper struct {
 }
 
 func NewIntervalScrapper(scrapper Scrapper, interval time.Duration) IntervalScrapper {
+	ctx, cancelCtx := context.WithCancel(context.Background())
+
 	isc := intervalScrapper{
-		ctx:         nil,
-		cancelCtx:   nil,
+		ctx:         ctx,
+		cancelCtx:   cancelCtx,
 		scrapper:    scrapper,
 		ticker:      time.NewTicker(interval),
 		chanResults: make(chan ScrapResult),
 	}
-
-	isc.start()
-
-	go func() {
-		isc.executeScrapper()
-	}()
-
-	return &isc
-}
-
-func (isc *intervalScrapper) start() {
-	isc.ctx, isc.cancelCtx = context.WithCancel(context.Background())
 
 	go func() {
 		for {
@@ -51,6 +41,12 @@ func (isc *intervalScrapper) start() {
 			}
 		}
 	}()
+
+	go func() {
+		isc.executeScrapper()
+	}()
+
+	return &isc
 }
 
 func (isc *intervalScrapper) executeScrapper() {
@@ -62,12 +58,10 @@ func (isc *intervalScrapper) Results() <-chan ScrapResult {
 }
 
 func (isc *intervalScrapper) SetInterval(interval time.Duration) {
-	isc.Stop()
 	isc.ticker.Reset(interval)
-	isc.start()
 }
 
-func (isc *intervalScrapper) Stop() {
+func (isc *intervalScrapper) Destroy() {
 	isc.ticker.Stop()
 	isc.cancelCtx()
 }

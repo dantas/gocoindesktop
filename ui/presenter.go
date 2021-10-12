@@ -61,7 +61,7 @@ func (p Presenter) SetInterval(interval time.Duration) error {
 
 func (p Presenter) Quit() {
 	close(p.events)
-	p.intervalScrapper.Stop()
+	p.intervalScrapper.Destroy()
 }
 
 func (p Presenter) saveSettings(settings domain.Settings) error {
