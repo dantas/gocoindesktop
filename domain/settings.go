@@ -5,11 +5,13 @@ import (
 )
 
 type Settings struct {
-	Interval time.Duration
+	Interval         time.Duration
+	ShowWindowOnOpen bool
 }
 
 var DefaultSettings = Settings{
-	Interval: 5 * time.Minute,
+	Interval:         5 * time.Minute,
+	ShowWindowOnOpen: false,
 }
 
 type SettingsStorage interface {

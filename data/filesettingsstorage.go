@@ -9,7 +9,8 @@ import (
 )
 
 type fileFormat struct {
-	Interval int64
+	Interval         int64
+	ShowWindowOnOpen bool
 }
 
 type fileSettingsStorage struct {
@@ -33,7 +34,8 @@ func (storage fileSettingsStorage) Save(pref domain.Settings) error {
 	defer file.Close()
 
 	decoded := fileFormat{
-		Interval: int64(pref.Interval),
+		Interval:         int64(pref.Interval),
+		ShowWindowOnOpen: pref.ShowWindowOnOpen,
 	}
 
 	encoder := json.NewEncoder(file)
@@ -64,6 +66,7 @@ func (storage fileSettingsStorage) Load() (domain.Settings, error) {
 	}
 
 	return domain.Settings{
-		Interval: time.Duration(decoded.Interval),
+		Interval:         time.Duration(decoded.Interval),
+		ShowWindowOnOpen: decoded.ShowWindowOnOpen,
 	}, nil
 }

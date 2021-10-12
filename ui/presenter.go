@@ -48,6 +48,12 @@ func (p Presenter) OnSystrayClickSettings() {
 	p.events <- PRESENTER_SHOW_SETTINGS
 }
 
+func (p Presenter) ShowWindowOnOpen() bool {
+	settings, _ := p.settingsStorage.Load()
+	return settings.ShowWindowOnOpen
+}
+
+// TODO Remove this
 func (p Presenter) Settings() domain.Settings {
 	settings, _ := p.settingsStorage.Load()
 	return settings
@@ -56,6 +62,12 @@ func (p Presenter) Settings() domain.Settings {
 func (p Presenter) SetInterval(interval time.Duration) error {
 	settings := p.Settings()
 	settings.Interval = interval
+	return p.saveSettings(settings)
+}
+
+func (p Presenter) SetShowWindowOnOpen(show bool) error {
+	settings := p.Settings()
+	settings.ShowWindowOnOpen = show
 	return p.saveSettings(settings)
 }
 

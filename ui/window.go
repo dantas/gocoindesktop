@@ -33,8 +33,9 @@ func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 		}
 	}()
 
-	// TODO SHOW HIDE DEPENDING ON SETTINGS
-	window.Show()
+	if presenter.ShowWindowOnOpen() {
+		window.Show()
+	}
 
 	return window
 }
