@@ -4,11 +4,12 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/domain"
 )
 
-func createCoinsTab(presenter Presenter) *widget.Table {
+func createCoinsTab(window fyne.Window, presenter Presenter) *widget.Table {
 	var coins []domain.Coin
 	var table *widget.Table
 
@@ -17,7 +18,11 @@ func createCoinsTab(presenter Presenter) *widget.Table {
 	go func() {
 		for result := range presenter.ScrapResults() {
 			coins = result.Coins
-			// TODO: Show errors (using dialogs) when we receive them from the domain layer
+
+			if result.Error != nil {
+				dialog.ShowError(result.Error, window)
+			}
+
 			table.Refresh()
 			table.SetColumnWidth(0, column[0])
 			table.SetColumnWidth(1, column[1])
