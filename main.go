@@ -6,11 +6,12 @@ import (
 	"github.com/dantas/gocoindesktop/data"
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui"
+	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/getlantern/systray"
 )
 
 func main() {
-	fyneApp := app.New()
+	fyneApp := app.NewWithID(localization.App.Title)
 
 	// Our little composition root
 	settingsStorage := data.NewFileSettingsStorage("settings.json")

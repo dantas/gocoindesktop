@@ -7,7 +7,7 @@ import (
 )
 
 func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
-	window := app.NewWindow(localization.Window.Title)
+	window := app.NewWindow(localization.App.Title)
 
 	appTabs := container.NewAppTabs(
 		container.NewTabItem(localization.Window.TabCoins, createCoinsTab(window, presenter)),

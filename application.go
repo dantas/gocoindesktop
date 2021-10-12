@@ -25,8 +25,8 @@ func NewApplication(fyneApp fyne.App, presenter ui.Presenter) Application {
 func (uiApp Application) ShowSystray() <-chan struct{} {
 	ctx, closeCtx := context.WithCancel(context.Background())
 
-	systray.SetTitle(localization.Window.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
-	systray.SetTooltip(localization.Window.Title)
+	systray.SetTitle(localization.App.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
+	systray.SetTooltip(localization.App.Title)
 	systray.SetIcon(ui.Icon)
 
 	showCoinsItem := systray.AddMenuItem(localization.Systray.Coins, localization.Systray.Coins)
