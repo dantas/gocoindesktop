@@ -13,7 +13,6 @@ const (
 	PRESENTER_SHOW_SETTINGS = iota
 )
 
-// TODO: UI/APP Behavior go first to presenter, which will emit events to the UI layer
 // Perhaps we would like to mock this in order to test the UI isolated from the rest of the system
 
 type Presenter struct {
@@ -48,25 +47,24 @@ func (p Presenter) OnSystrayClickSettings() {
 	p.events <- PRESENTER_SHOW_SETTINGS
 }
 
+func (p Presenter) UpdateInterval() time.Duration {
+	settings, _ := p.settingsStorage.Load()
+	return settings.Interval
+}
+
+func (p Presenter) SetInterval(interval time.Duration) error {
+	settings, _ := p.settingsStorage.Load()
+	settings.Interval = interval
+	return p.saveSettings(settings)
+}
+
 func (p Presenter) ShowWindowOnOpen() bool {
 	settings, _ := p.settingsStorage.Load()
 	return settings.ShowWindowOnOpen
 }
 
-// TODO Remove this
-func (p Presenter) Settings() domain.Settings {
-	settings, _ := p.settingsStorage.Load()
-	return settings
-}
-
-func (p Presenter) SetInterval(interval time.Duration) error {
-	settings := p.Settings()
-	settings.Interval = interval
-	return p.saveSettings(settings)
-}
-
 func (p Presenter) SetShowWindowOnOpen(show bool) error {
-	settings := p.Settings()
+	settings, _ := p.settingsStorage.Load()
 	settings.ShowWindowOnOpen = show
 	return p.saveSettings(settings)
 }

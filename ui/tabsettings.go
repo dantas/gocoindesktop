@@ -8,24 +8,24 @@ import (
 )
 
 func createSettingsTab(presenter Presenter) *widget.Form {
-	settings := presenter.Settings()
-
-	intervalOption := widget.NewFormItem(
+	intervalOption := presenter.UpdateInterval()
+	intervalWidget := widget.NewFormItem(
 		localization.Settings.UpdateInterval,
-		createIntervalOption(&settings.Interval),
+		createIntervalOption(&intervalOption),
 	)
 
+	windowOnOpen := presenter.ShowWindowOnOpen()
 	showWindowOnOpenOption := widget.NewFormItem(
 		localization.Settings.ShowWindowOnOpen.FormLabel,
-		createShowWindowOnOpenOption(&settings.ShowWindowOnOpen),
+		createShowWindowOnOpenOption(&windowOnOpen),
 	)
 
-	form := widget.NewForm(intervalOption, showWindowOnOpenOption)
+	form := widget.NewForm(intervalWidget, showWindowOnOpenOption)
 
 	form.SubmitText = localization.Settings.SubmitButton
 	form.OnSubmit = func() {
-		presenter.SetInterval(settings.Interval)
-		presenter.SetShowWindowOnOpen(settings.ShowWindowOnOpen)
+		presenter.SetInterval(intervalOption)
+		presenter.SetShowWindowOnOpen(windowOnOpen)
 	}
 
 	return form
