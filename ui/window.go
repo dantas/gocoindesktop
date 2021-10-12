@@ -33,6 +33,17 @@ func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 		}
 	}()
 
+	go func() {
+		for event := range presenter.AlarmEvents() {
+			notification := fyne.NewNotification(
+				localization.Alarm.EnterRange.Title,
+				localization.Alarm.EnterRange.Message(event.Coin),
+			)
+
+			app.SendNotification(notification)
+		}
+	}()
+
 	if presenter.ShowWindowOnOpen() {
 		window.Show()
 	}

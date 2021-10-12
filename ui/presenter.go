@@ -13,19 +13,26 @@ const (
 	PRESENTER_SHOW_SETTINGS = iota
 )
 
+// TODO Move to domain
+type PresenterAlarmEvent struct {
+	Coin domain.Coin
+}
+
 // Perhaps we would like to mock this in order to test the UI isolated from the rest of the system
 
 type Presenter struct {
 	intervalScrapper domain.IntervalScrapper
 	settingsStorage  domain.SettingsStorage
-	events           chan PresenterShowEvent
+	showEvents       chan PresenterShowEvent
+	alarmEvents      chan PresenterAlarmEvent
 }
 
 func NewPresenter(intervalScrapper domain.IntervalScrapper, settingsStorage domain.SettingsStorage) Presenter {
 	presenter := Presenter{
 		intervalScrapper: intervalScrapper,
 		settingsStorage:  settingsStorage,
-		events:           make(chan PresenterShowEvent),
+		showEvents:       make(chan PresenterShowEvent),
+		alarmEvents:      make(chan PresenterAlarmEvent),
 	}
 
 	return presenter
@@ -36,15 +43,19 @@ func (p Presenter) ScrapResults() <-chan domain.ScrapResult {
 }
 
 func (p Presenter) ShowEvents() <-chan PresenterShowEvent {
-	return p.events
+	return p.showEvents
+}
+
+func (p Presenter) AlarmEvents() <-chan PresenterAlarmEvent {
+	return p.alarmEvents
 }
 
 func (p Presenter) OnSystrayClickCoins() {
-	p.events <- PRESENTER_SHOW_COINS
+	p.showEvents <- PRESENTER_SHOW_COINS
 }
 
 func (p Presenter) OnSystrayClickSettings() {
-	p.events <- PRESENTER_SHOW_SETTINGS
+	p.showEvents <- PRESENTER_SHOW_SETTINGS
 }
 
 func (p Presenter) UpdateInterval() time.Duration {
@@ -70,7 +81,8 @@ func (p Presenter) SetShowWindowOnOpen(show bool) error {
 }
 
 func (p Presenter) Quit() {
-	close(p.events)
+	close(p.showEvents)
+	close(p.alarmEvents)
 	p.intervalScrapper.Destroy()
 }
 
