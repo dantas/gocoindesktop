@@ -14,7 +14,7 @@ func main() {
 	fyneApp := app.NewWithID(localization.App.Title)
 
 	// Our little composition root
-	settingsStorage := data.NewFileSettingsStorage("settings.json")
+	settingsStorage := data.NewJsonFileSettingsStorage("settings.json")
 	scrapper := domain.NewScrapper(data.CoinMarketCapSource)
 	settings, _ := settingsStorage.Load() // TODO: THIS IS FUCKED UP
 	intervalScrapper := domain.NewIntervalScrapper(scrapper, settings.Interval)

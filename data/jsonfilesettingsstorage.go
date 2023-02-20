@@ -8,22 +8,22 @@ import (
 	"github.com/dantas/gocoindesktop/domain"
 )
 
-type fileFormat struct {
+type jsonFileFormat struct {
 	Interval         int64
 	ShowWindowOnOpen bool
 }
 
-type fileSettingsStorage struct {
+type jsonFileSettingsStorage struct {
 	path string
 }
 
-func NewFileSettingsStorage(path string) domain.SettingsStorage {
-	return fileSettingsStorage{
+func NewJsonFileSettingsStorage(path string) domain.SettingsStorage {
+	return jsonFileSettingsStorage{
 		path: path,
 	}
 }
 
-func (storage fileSettingsStorage) Save(pref domain.Settings) error {
+func (storage jsonFileSettingsStorage) Save(pref domain.Settings) error {
 	var file *os.File
 	var e error
 
@@ -33,7 +33,7 @@ func (storage fileSettingsStorage) Save(pref domain.Settings) error {
 
 	defer file.Close()
 
-	decoded := fileFormat{
+	decoded := jsonFileFormat{
 		Interval:         int64(pref.Interval),
 		ShowWindowOnOpen: pref.ShowWindowOnOpen,
 	}
@@ -47,22 +47,22 @@ func (storage fileSettingsStorage) Save(pref domain.Settings) error {
 	return nil
 }
 
-func (storage fileSettingsStorage) Load() (domain.Settings, error) {
+func (storage jsonFileSettingsStorage) Load() (domain.Settings, error) {
 	var file *os.File
 	var e error
 
 	if file, e = os.Open(storage.path); e != nil {
-		return domain.DefaultSettings, e
+		return domain.NewDefaultSettings(), e
 	}
 
 	defer file.Close()
 
-	var decoded fileFormat
+	var decoded jsonFileFormat
 
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return domain.DefaultSettings, e
+		return domain.NewDefaultSettings(), e
 	}
 
 	return domain.Settings{

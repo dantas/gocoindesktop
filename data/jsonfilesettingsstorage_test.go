@@ -11,10 +11,11 @@ import (
 
 func TestFileSettingsStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	location := path.Join(os.TempDir(), "preferences.json")
-	storage := NewFileSettingsStorage(location)
+	storage := NewJsonFileSettingsStorage(location)
 
 	preference := domain.Settings{
-		Interval: 3 * time.Hour,
+		Interval:         3 * time.Hour,
+		ShowWindowOnOpen: true,
 	}
 
 	if e := storage.Save(preference); e != nil {
