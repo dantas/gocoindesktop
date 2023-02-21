@@ -6,23 +6,30 @@ import (
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/infrastructure"
 	"github.com/dantas/gocoindesktop/ui"
-	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/getlantern/systray"
 )
 
-func main() {
-	fyneApp := app.NewWithID(localization.App.Title)
-
+func StartApplication(fyneApp fyne.App) <-chan struct{} {
 	// Our little composition root
 	settingsStorage := infrastructure.NewJsonFileSettingsStorage("settings.json")
 	scrapper := domain.NewScrapper(infrastructure.CoinMarketCapSource)
 	settings, _ := settingsStorage.Load() // TODO: THIS IS FUCKED UP
 	intervalScrapper := domain.NewIntervalScrapper(scrapper, settings.Interval)
-	presenter := ui.NewPresenter(intervalScrapper, settingsStorage)
-	application := NewApplication(fyneApp, presenter)
+
+	application := domain.NewApplication(intervalScrapper, settingsStorage)
+
+	presenter := ui.NewPresenter(application)
+
+	ui.CreateWindow(fyneApp, presenter) // TODO: Do we need to keep a reference to this?
+
+	return ui.CreateSystray(presenter)
+}
+
+func main() {
+	fyneApp := app.NewWithID("gocoindesktop") // TODO Double check id
 
 	go func() {
-		<-application.ShowSystray()
+		<-StartApplication(fyneApp)
 		quit(fyneApp)
 	}()
 
@@ -30,6 +37,7 @@ func main() {
 }
 
 func mainLoop(fyneApp fyne.App) {
+	// Connect systray main loop with fyne main loop
 	go func() {
 		systray.Run(nil, nil)
 	}()

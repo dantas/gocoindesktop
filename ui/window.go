@@ -16,12 +16,12 @@ func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 
 	window.SetContent(appTabs)
 
-	window.Resize(fyne.NewSize(300, 200))
+	window.Resize(fyne.NewSize(400, 300))
 	window.SetCloseIntercept(window.Hide)
 	window.CenterOnScreen()
 
 	go func() {
-		for event := range presenter.ShowEvents() {
+		for event := range presenter.Events() {
 			switch event {
 			case PRESENTER_SHOW_COINS:
 				window.Show()
@@ -33,18 +33,18 @@ func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 		}
 	}()
 
-	go func() {
-		for event := range presenter.AlarmEvents() {
-			notification := fyne.NewNotification(
-				localization.Alarm.EnterRange.Title,
-				localization.Alarm.EnterRange.Message(event.Coin),
-			)
+	// go func() {
+	// 	for event := range presenter.AlarmEvents() {
+	// 		notification := fyne.NewNotification(
+	// 			localization.Alarm.EnterRange.Title,
+	// 			localization.Alarm.EnterRange.Message(event.Coin),
+	// 		)
 
-			app.SendNotification(notification)
-		}
-	}()
+	// 		app.SendNotification(notification)
+	// 	}
+	// }()
 
-	if presenter.ShowWindowOnOpen() {
+	if presenter.Settings().ShowWindowOnOpen {
 		window.Show()
 	}
 

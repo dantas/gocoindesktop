@@ -4,17 +4,18 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2/widget"
+	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
 func createSettingsTab(presenter Presenter) *widget.Form {
-	intervalOption := presenter.UpdateInterval()
+	intervalOption := presenter.Settings().Interval
 	intervalWidget := widget.NewFormItem(
 		localization.Settings.UpdateInterval,
 		createIntervalOption(&intervalOption),
 	)
 
-	windowOnOpen := presenter.ShowWindowOnOpen()
+	windowOnOpen := presenter.Settings().ShowWindowOnOpen
 	showWindowOnOpenOption := widget.NewFormItem(
 		localization.Settings.ShowWindowOnOpen.FormLabel,
 		createShowWindowOnOpenOption(&windowOnOpen),
@@ -24,8 +25,12 @@ func createSettingsTab(presenter Presenter) *widget.Form {
 
 	form.SubmitText = localization.Settings.SubmitButton
 	form.OnSubmit = func() {
-		presenter.SetInterval(intervalOption)
-		presenter.SetShowWindowOnOpen(windowOnOpen)
+		newSettings := domain.Settings{
+			Interval:         intervalOption,
+			ShowWindowOnOpen: windowOnOpen,
+		}
+
+		presenter.SetSettings(newSettings)
 	}
 
 	return form
