@@ -6,7 +6,7 @@ import (
 )
 
 // =======
-// Data layer implements this function
+// Infrastructure layer implements this function
 
 type CoinSource func(ctx context.Context) <-chan CoinSourceResult
 
