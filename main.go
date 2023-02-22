@@ -13,8 +13,7 @@ func StartApplication(fyneApp fyne.App) <-chan struct{} {
 	// Our little composition root
 	settingsStorage := infrastructure.NewJsonFileSettingsStorage("settings.json")
 	scrapper := domain.NewScrapper(infrastructure.CoinMarketCapSource)
-	settings, _ := settingsStorage.Load() // TODO: THIS IS FUCKED UP
-	intervalScrapper := domain.NewIntervalScrapper(scrapper, settings.Interval)
+	intervalScrapper := domain.NewIntervalScrapper(scrapper)
 
 	application := domain.NewApplication(intervalScrapper, settingsStorage)
 

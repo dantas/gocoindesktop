@@ -19,16 +19,18 @@ type intervalScrapper struct {
 	chanResults chan ScrapResult
 }
 
-func NewIntervalScrapper(scrapper Scrapper, interval time.Duration) IntervalScrapper {
+func NewIntervalScrapper(scrapper Scrapper) IntervalScrapper {
 	ctx, cancelCtx := context.WithCancel(context.Background())
 
 	isc := intervalScrapper{
 		ctx:         ctx,
 		cancelCtx:   cancelCtx,
 		scrapper:    scrapper,
-		ticker:      time.NewTicker(interval),
+		ticker:      time.NewTicker(time.Second),
 		chanResults: make(chan ScrapResult),
 	}
+
+	isc.ticker.Stop()
 
 	go func() {
 		for {

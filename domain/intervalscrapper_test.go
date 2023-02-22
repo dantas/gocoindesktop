@@ -36,7 +36,9 @@ var scrapResults = []domain.ScrapResult{
 
 func TestIntervalScrapper(t *testing.T) {
 	scrapper := domain.NewScrapper(createCoinMockSource())
-	intervalScrapper := domain.NewIntervalScrapper(scrapper, 1*time.Second)
+	intervalScrapper := domain.NewIntervalScrapper(scrapper)
+
+	intervalScrapper.SetInterval(1 * time.Second)
 
 	index := 0
 
