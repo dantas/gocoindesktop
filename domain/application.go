@@ -28,11 +28,11 @@ func (app *Application) ScrapResults() <-chan ScrapResult {
 	return app.intervalScrapper.Results()
 }
 
-func (app Application) Settings() Settings {
+func (app *Application) Settings() Settings {
 	return app.settings
 }
 
-func (app Application) SetSettings(settings Settings) error {
+func (app *Application) SetSettings(settings Settings) error {
 	if e := app.settingsStorage.Save(settings); e != nil {
 		return e
 	}
@@ -43,6 +43,6 @@ func (app Application) SetSettings(settings Settings) error {
 	return nil
 }
 
-func (app Application) Destroy() {
+func (app *Application) Destroy() {
 	app.intervalScrapper.Destroy()
 }
