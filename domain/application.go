@@ -16,7 +16,7 @@ func NewApplication(intervalScrapper IntervalScrapper, settingsStorage SettingsS
 		// TODO: Use exclusive channel for errors?
 		application.settings = settings
 	} else {
-		application.settings = NewDefaultSettings()
+		application.settings = newDefaultSettings()
 	}
 
 	intervalScrapper.SetInterval(application.settings.Interval)

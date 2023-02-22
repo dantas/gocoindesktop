@@ -14,7 +14,7 @@ type SettingsStorage interface {
 	Load() (Settings, error)
 }
 
-func NewDefaultSettings() Settings {
+func newDefaultSettings() Settings {
 	return Settings{
 		Interval:         5 * time.Minute,
 		ShowWindowOnOpen: false,
