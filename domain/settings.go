@@ -11,7 +11,7 @@ type Settings struct {
 
 type SettingsStorage interface {
 	Save(Settings) error
-	Load() (Settings, error) // In case of error must return (Default.Settings, error)
+	Load() (Settings, error)
 }
 
 func NewDefaultSettings() Settings {

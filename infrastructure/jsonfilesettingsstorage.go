@@ -52,7 +52,7 @@ func (storage jsonFileSettingsStorage) Load() (domain.Settings, error) {
 	var e error
 
 	if file, e = os.Open(storage.path); e != nil {
-		return domain.NewDefaultSettings(), e
+		return domain.Settings{}, e
 	}
 
 	defer file.Close()
@@ -62,7 +62,7 @@ func (storage jsonFileSettingsStorage) Load() (domain.Settings, error) {
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return domain.NewDefaultSettings(), e
+		return domain.Settings{}, e
 	}
 
 	return domain.Settings{
