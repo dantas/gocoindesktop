@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"github.com/dantas/gocoindesktop/domain"
@@ -9,34 +11,41 @@ import (
 	"github.com/getlantern/systray"
 )
 
-func StartApplication(fyneApp fyne.App) <-chan struct{} {
-	// Our little composition root
+func main() {
+	application := newApplicationCompositionRoot()
+	runFyneApp(application)
+}
+
+func newApplicationCompositionRoot() domain.Application {
 	settingsStorage := infrastructure.NewJsonFileSettingsStorage("settings.json")
 	scrapper := domain.NewScrapper(infrastructure.CoinMarketCapSource)
 	intervalScrapper := domain.NewIntervalScrapper(scrapper)
-
-	application := domain.NewApplication(intervalScrapper, settingsStorage)
-
-	presenter := ui.NewPresenter(application)
-
-	ui.CreateWindow(fyneApp, presenter) // TODO: Do we need to keep a reference to this?
-
-	return ui.CreateSystray(presenter)
+	return domain.NewApplication(intervalScrapper, settingsStorage)
 }
 
-func main() {
-	fyneApp := app.NewWithID("gocoindesktop") // TODO Double check id
+func runFyneApp(application domain.Application) {
+	fyneApp := app.NewWithID("gocoindesktop")
+
+	ctx, cancelFunc := context.WithCancel(context.Background())
 
 	go func() {
-		<-StartApplication(fyneApp)
+		<-ctx.Done()
 		quit(fyneApp)
 	}()
 
-	mainLoop(fyneApp)
+	setupUi(cancelFunc, fyneApp, application)
+
+	runMainLoops(fyneApp)
 }
 
-func mainLoop(fyneApp fyne.App) {
-	// Connect systray main loop with fyne main loop
+func setupUi(cancelFunc context.CancelFunc, fyneApp fyne.App, application domain.Application) {
+	presenter := ui.NewPresenter(application)
+	ui.CreateWindow(fyneApp, presenter) // TODO: Do we need to keep a reference to the window?
+	ui.SetupSystray(cancelFunc, presenter)
+}
+
+func runMainLoops(fyneApp fyne.App) {
+	// Run systray's main loop in parallel with fyne's main loop
 	go func() {
 		systray.Run(nil, nil)
 	}()

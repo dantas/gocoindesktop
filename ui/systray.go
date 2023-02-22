@@ -7,9 +7,7 @@ import (
 	"github.com/getlantern/systray"
 )
 
-func CreateSystray(presenter Presenter) <-chan struct{} {
-	ctx, closeCtx := context.WithCancel(context.Background())
-
+func SetupSystray(cancelFunc context.CancelFunc, presenter Presenter) {
 	systray.SetTitle(localization.App.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
 	systray.SetTooltip(localization.App.Title)
 	systray.SetIcon(Icon)
@@ -28,10 +26,8 @@ func CreateSystray(presenter Presenter) <-chan struct{} {
 				presenter.OnSystrayClickSettings()
 			case <-quitItem.ClickedCh:
 				presenter.OnSystrayClickQuit()
-				closeCtx()
+				cancelFunc()
 			}
 		}
 	}()
-
-	return ctx.Done()
 }
