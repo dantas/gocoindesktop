@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/domain"
 )
@@ -18,10 +17,6 @@ func createCoinsTab(window fyne.Window, presenter Presenter) *widget.Table {
 	go func() {
 		for result := range presenter.ScrapResults() {
 			coins = result.Coins
-
-			if result.Error != nil {
-				dialog.ShowError(result.Error, window)
-			}
 
 			table.Refresh()
 			table.SetColumnWidth(0, column[0])

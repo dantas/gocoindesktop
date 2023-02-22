@@ -3,6 +3,7 @@ package ui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
@@ -30,6 +31,12 @@ func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
 				window.Show()
 				appTabs.SelectTabIndex(1)
 			}
+		}
+	}()
+
+	go func() {
+		for err := range presenter.Errors() {
+			dialog.ShowError(err, window)
 		}
 	}()
 

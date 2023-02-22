@@ -4,15 +4,18 @@ type Application struct {
 	intervalScrapper IntervalScrapper
 	settingsStorage  SettingsStorage
 	settings         Settings
+	errors           chan error
 }
 
 func NewApplication(intervalScrapper IntervalScrapper, settingsStorage SettingsStorage) Application {
 	application := Application{
 		intervalScrapper: intervalScrapper,
 		settingsStorage:  settingsStorage,
+		errors:           make(chan error),
 	}
 
 	if settings, err := settingsStorage.Load(); err != nil {
+		application.errors <- err
 		application.settings = newDefaultSettings()
 	} else {
 		application.settings = settings
@@ -25,6 +28,10 @@ func NewApplication(intervalScrapper IntervalScrapper, settingsStorage SettingsS
 
 func (app *Application) ScrapResults() <-chan ScrapResult {
 	return app.intervalScrapper.Results()
+}
+
+func (app *Application) Errors() <-chan error {
+	return app.errors
 }
 
 func (app *Application) Settings() Settings {
@@ -43,5 +50,6 @@ func (app *Application) SetSettings(settings Settings) error {
 }
 
 func (app *Application) Destroy() {
+	close(app.errors)
 	app.intervalScrapper.Destroy()
 }

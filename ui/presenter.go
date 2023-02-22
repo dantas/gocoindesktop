@@ -19,6 +19,7 @@ type Presenter interface {
 	Settings() domain.Settings
 	SetSettings(settings domain.Settings)
 	ScrapResults() <-chan domain.ScrapResult // Change this into something else?
+	Errors() <-chan error
 }
 
 type presenter struct {
@@ -62,4 +63,8 @@ func (p presenter) SetSettings(settings domain.Settings) {
 
 func (p presenter) ScrapResults() <-chan domain.ScrapResult {
 	return p.app.ScrapResults()
+}
+
+func (p presenter) Errors() <-chan error {
+	return p.app.Errors()
 }
