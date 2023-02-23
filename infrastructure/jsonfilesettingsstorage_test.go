@@ -11,6 +11,11 @@ import (
 
 func TestFileSettingsStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	location := path.Join(os.TempDir(), "preferences.json")
+
+	if e := os.Remove(location); e != nil {
+		t.Errorf("Error removing file from temporary storage, test setup error: %v", e)
+	}
+
 	storage := NewJsonFileSettingsStorage(location)
 
 	preference := domain.Settings{
