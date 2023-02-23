@@ -18,9 +18,8 @@ func main() {
 
 func newApplicationCompositionRoot() domain.Application {
 	settingsStorage := infrastructure.NewJsonFileSettingsStorage("settings.json")
-	scrapper := domain.NewScrapper(infrastructure.CoinMarketCapSource)
-	intervalScrapper := domain.NewIntervalScrapper(scrapper)
-	return domain.NewApplication(intervalScrapper, settingsStorage)
+	coinTicker := domain.NewCoinTicker(infrastructure.CoinMarketCapSource)
+	return domain.NewApplication(coinTicker, settingsStorage)
 }
 
 func runFyneApp(application domain.Application) {

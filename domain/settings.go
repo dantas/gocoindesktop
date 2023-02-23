@@ -17,6 +17,6 @@ type SettingsStorage interface {
 func newDefaultSettings() Settings {
 	return Settings{
 		Interval:         5 * time.Minute,
-		ShowWindowOnOpen: false,
+		ShowWindowOnOpen: true,
 	}
 }

@@ -15,9 +15,7 @@ func createCoinsTab(window fyne.Window, presenter Presenter) *widget.Table {
 	var column [2]float32
 
 	go func() {
-		for result := range presenter.ScrapResults() {
-			coins = result.Coins
-
+		for coins = range presenter.Coins() {
 			table.Refresh()
 			table.SetColumnWidth(0, column[0])
 			table.SetColumnWidth(1, column[1])

@@ -1,33 +1,36 @@
 package domain
 
 type Application struct {
-	intervalScrapper IntervalScrapper
-	settingsStorage  SettingsStorage
-	settings         Settings
-	errors           chan error
+	coinTicker      CoinTicker
+	settingsStorage SettingsStorage
+	settings        Settings
+	errors          chan error
 }
 
-func NewApplication(intervalScrapper IntervalScrapper, settingsStorage SettingsStorage) Application {
+func NewApplication(coinTicker CoinTicker, settingsStorage SettingsStorage) Application {
 	application := Application{
-		intervalScrapper: intervalScrapper,
-		settingsStorage:  settingsStorage,
-		errors:           make(chan error),
+		coinTicker:      coinTicker,
+		settingsStorage: settingsStorage,
+		errors:          make(chan error),
 	}
 
 	if settings, err := settingsStorage.Load(); err != nil {
-		application.errors <- err
+		go func() { // TODO: Use goroutine or make channel buffered?
+			application.errors <- err
+		}()
+
 		application.settings = newDefaultSettings()
 	} else {
 		application.settings = settings
 	}
 
-	intervalScrapper.SetInterval(application.settings.Interval)
+	coinTicker.SetInterval(application.settings.Interval)
 
 	return application
 }
 
-func (app *Application) ScrapResults() <-chan ScrapResult {
-	return app.intervalScrapper.Results()
+func (app *Application) Coins() <-chan []Coin {
+	return app.coinTicker.Coins()
 }
 
 func (app *Application) Errors() <-chan error {
@@ -44,12 +47,12 @@ func (app *Application) SetSettings(settings Settings) error {
 	}
 
 	app.settings = settings
-	app.intervalScrapper.SetInterval(settings.Interval)
+	app.coinTicker.SetInterval(settings.Interval)
 
 	return nil
 }
 
 func (app *Application) Destroy() {
 	close(app.errors)
-	app.intervalScrapper.Destroy()
+	app.coinTicker.Destroy()
 }

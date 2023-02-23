@@ -18,7 +18,7 @@ type Presenter interface {
 	Events() <-chan PresenterEvent
 	Settings() domain.Settings
 	SetSettings(settings domain.Settings)
-	ScrapResults() <-chan domain.ScrapResult // Change this into something else?
+	Coins() <-chan []domain.Coin
 	Errors() <-chan error
 }
 
@@ -45,8 +45,6 @@ func (p presenter) OnSystrayClickSettings() {
 func (p presenter) OnSystrayClickQuit() {
 	close(p.events)
 	p.app.Destroy()
-	// TODO Decide what to do
-	// p.events <- PRESENTER_SHOW_SETTINGS
 }
 
 func (p presenter) Events() <-chan PresenterEvent {
@@ -61,8 +59,8 @@ func (p presenter) SetSettings(settings domain.Settings) {
 	p.app.SetSettings(settings)
 }
 
-func (p presenter) ScrapResults() <-chan domain.ScrapResult {
-	return p.app.ScrapResults()
+func (p presenter) Coins() <-chan []domain.Coin {
+	return p.app.Coins()
 }
 
 func (p presenter) Errors() <-chan error {
