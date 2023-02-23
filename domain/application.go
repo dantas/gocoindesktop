@@ -11,18 +11,21 @@ func NewApplication(coinTicker CoinTicker, settingsStorage SettingsStorage) Appl
 	application := Application{
 		coinTicker:      coinTicker,
 		settingsStorage: settingsStorage,
-		errors:          make(chan error),
+		errors:          make(chan error, 1),
 	}
 
 	if settings, err := settingsStorage.Load(); err != nil {
-		go func() { // TODO: Use goroutine or make channel buffered?
-			application.errors <- err
-		}()
-
+		application.errors <- err
 		application.settings = newDefaultSettings()
 	} else {
 		application.settings = settings
 	}
+
+	go func() {
+		for err := range application.coinTicker.Errors() {
+			application.errors <- err
+		}
+	}()
 
 	coinTicker.SetInterval(application.settings.Interval)
 
