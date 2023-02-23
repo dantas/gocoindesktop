@@ -23,11 +23,11 @@ type Presenter interface {
 }
 
 type presenter struct {
-	app    domain.Application
+	app    *domain.Application
 	events chan PresenterEvent
 }
 
-func NewPresenter(app domain.Application) Presenter {
+func NewPresenter(app *domain.Application) Presenter {
 	return presenter{
 		app:    app,
 		events: make(chan PresenterEvent),

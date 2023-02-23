@@ -7,7 +7,7 @@ type Application struct {
 	errors          chan error
 }
 
-func NewApplication(coinTicker CoinTicker, settingsStorage SettingsStorage) Application {
+func NewApplication(coinTicker CoinTicker, settingsStorage SettingsStorage) *Application {
 	application := Application{
 		coinTicker:      coinTicker,
 		settingsStorage: settingsStorage,
@@ -29,7 +29,7 @@ func NewApplication(coinTicker CoinTicker, settingsStorage SettingsStorage) Appl
 
 	coinTicker.SetInterval(application.settings.Interval)
 
-	return application
+	return &application
 }
 
 func (app *Application) Coins() <-chan []Coin {

@@ -16,13 +16,13 @@ func main() {
 	runFyneApp(application)
 }
 
-func newApplicationCompositionRoot() domain.Application {
+func newApplicationCompositionRoot() *domain.Application {
 	settingsStorage := infrastructure.NewJsonFileSettingsStorage("settings.json")
 	coinTicker := domain.NewCoinTicker(infrastructure.CoinMarketCapSource)
 	return domain.NewApplication(coinTicker, settingsStorage)
 }
 
-func runFyneApp(application domain.Application) {
+func runFyneApp(application *domain.Application) {
 	fyneApp := app.NewWithID("gocoindesktop")
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
@@ -37,7 +37,7 @@ func runFyneApp(application domain.Application) {
 	runMainLoops(fyneApp)
 }
 
-func setupUi(cancelFunc context.CancelFunc, fyneApp fyne.App, application domain.Application) {
+func setupUi(cancelFunc context.CancelFunc, fyneApp fyne.App, application *domain.Application) {
 	presenter := ui.NewPresenter(application)
 	ui.CreateWindow(fyneApp, presenter) // TODO: Do we need to keep a reference to the window?
 	ui.SetupSystray(cancelFunc, presenter)
