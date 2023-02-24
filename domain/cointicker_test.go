@@ -24,10 +24,14 @@ var mockCoins = []domain.Coin{
 	},
 }
 
-var mockError = errors.New("tragic error")
+var errFoo = errors.New("tragic error")
 
-func TestSuccessCoinTicker(t *testing.T) {
-	coinTicker := domain.NewCoinTicker(createSuccessCoinSource())
+func TestCoinTickerReturnsFetchedCoins(t *testing.T) {
+	coinTicker := domain.NewCoinTicker(
+		func() ([]domain.Coin, error) {
+			return mockCoins, nil
+		},
+	)
 
 	coinTicker.SetInterval(1 * time.Millisecond)
 
@@ -40,28 +44,20 @@ func TestSuccessCoinTicker(t *testing.T) {
 	}
 }
 
-func TestFailureCoinTicker(t *testing.T) {
-	coinTicker := domain.NewCoinTicker(createFailureCoinSource())
+func TestCoinTickerReturnsFailure(t *testing.T) {
+	coinTicker := domain.NewCoinTicker(
+		func() ([]domain.Coin, error) {
+			return make([]domain.Coin, 0), errFoo
+		},
+	)
 
 	coinTicker.SetInterval(1 * time.Millisecond)
 
 	for err := range coinTicker.Errors() {
-		if !errors.Is(err, mockError) {
-			t.Errorf("Returned error is different from what is expected %v != %v\n", err, mockError)
+		if !errors.Is(err, errFoo) {
+			t.Errorf("Returned error is different from what is expected %v != %v\n", err, errFoo)
 		}
 
 		coinTicker.Destroy()
-	}
-}
-
-func createSuccessCoinSource() domain.CoinSource {
-	return func() ([]domain.Coin, error) {
-		return mockCoins, nil
-	}
-}
-
-func createFailureCoinSource() domain.CoinSource {
-	return func() ([]domain.Coin, error) {
-		return make([]domain.Coin, 0), mockError
 	}
 }
