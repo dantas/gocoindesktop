@@ -1,4 +1,4 @@
-package ui
+package gui
 
 import (
 	"github.com/dantas/gocoindesktop/domain"
