@@ -28,41 +28,41 @@ type presenter struct {
 }
 
 func NewPresenter(app *domain.Application) Presenter {
-	return presenter{
+	return &presenter{
 		app:    app,
 		events: make(chan PresenterEvent),
 	}
 }
 
-func (p presenter) OnSystrayClickCoins() {
+func (p *presenter) OnSystrayClickCoins() {
 	p.events <- PRESENTER_SHOW_COINS
 }
 
-func (p presenter) OnSystrayClickSettings() {
+func (p *presenter) OnSystrayClickSettings() {
 	p.events <- PRESENTER_SHOW_SETTINGS
 }
 
-func (p presenter) OnSystrayClickQuit() {
+func (p *presenter) OnSystrayClickQuit() {
 	close(p.events)
 	p.app.Destroy()
 }
 
-func (p presenter) Events() <-chan PresenterEvent {
+func (p *presenter) Events() <-chan PresenterEvent {
 	return p.events
 }
 
-func (p presenter) Settings() domain.Settings {
+func (p *presenter) Settings() domain.Settings {
 	return p.app.Settings()
 }
 
-func (p presenter) SetSettings(settings domain.Settings) {
+func (p *presenter) SetSettings(settings domain.Settings) {
 	p.app.SetSettings(settings)
 }
 
-func (p presenter) Coins() <-chan []domain.Coin {
+func (p *presenter) Coins() <-chan []domain.Coin {
 	return p.app.Coins()
 }
 
-func (p presenter) Errors() <-chan error {
+func (p *presenter) Errors() <-chan error {
 	return p.app.Errors()
 }

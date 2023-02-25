@@ -52,10 +52,10 @@ func NewCoinTicker(source CoinSource) CoinTicker {
 		ct.fetchCoins()
 	}()
 
-	return ct
+	return &ct
 }
 
-func (ct coinTicker) fetchCoins() {
+func (ct *coinTicker) fetchCoins() {
 	coins, err := ct.source()
 
 	if err != nil {
@@ -65,18 +65,18 @@ func (ct coinTicker) fetchCoins() {
 	}
 }
 
-func (ct coinTicker) Coins() <-chan []Coin {
+func (ct *coinTicker) Coins() <-chan []Coin {
 	return ct.coins
 }
 
-func (ct coinTicker) Errors() <-chan error {
+func (ct *coinTicker) Errors() <-chan error {
 	return ct.errors
 }
 
-func (ct coinTicker) SetInterval(interval time.Duration) {
+func (ct *coinTicker) SetInterval(interval time.Duration) {
 	ct.ticker.Reset(interval)
 }
 
-func (ct coinTicker) Destroy() {
+func (ct *coinTicker) Destroy() {
 	ct.cancelCtx()
 }
