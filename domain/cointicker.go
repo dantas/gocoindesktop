@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"context"
 	"time"
 )
 
@@ -13,24 +12,20 @@ type CoinTicker interface {
 }
 
 type coinTicker struct {
-	ctx       context.Context
-	cancelCtx context.CancelFunc
-	source    CoinSource
-	ticker    *time.Ticker
-	coins     chan []Coin
-	errors    chan error
+	done   chan struct{}
+	source CoinSource
+	ticker *time.Ticker
+	coins  chan []Coin
+	errors chan error
 }
 
 func NewCoinTicker(source CoinSource) CoinTicker {
-	ctx, cancelCtx := context.WithCancel(context.Background())
-
 	ct := coinTicker{
-		ctx:       ctx,
-		cancelCtx: cancelCtx,
-		source:    source,
-		ticker:    time.NewTicker(time.Second),
-		coins:     make(chan []Coin),
-		errors:    make(chan error),
+		done:   make(chan struct{}),
+		source: source,
+		ticker: time.NewTicker(time.Second),
+		coins:  make(chan []Coin),
+		errors: make(chan error),
 	}
 
 	ct.ticker.Stop()
@@ -38,7 +33,7 @@ func NewCoinTicker(source CoinSource) CoinTicker {
 	go func() {
 		for {
 			select {
-			case <-ct.ctx.Done():
+			case <-ct.done:
 				close(ct.coins)
 				close(ct.errors)
 				return
@@ -78,5 +73,5 @@ func (ct *coinTicker) SetInterval(interval time.Duration) {
 }
 
 func (ct *coinTicker) Destroy() {
-	ct.cancelCtx()
+	close(ct.done)
 }
