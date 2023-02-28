@@ -27,7 +27,7 @@ type presenter struct {
 	events chan PresenterEvent
 }
 
-func NewPresenter(app *domain.Application) Presenter {
+func newPresenter(app *domain.Application) Presenter {
 	return &presenter{
 		app:    app,
 		events: make(chan PresenterEvent),

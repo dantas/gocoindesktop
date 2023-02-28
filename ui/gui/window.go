@@ -7,7 +7,7 @@ import (
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
-func CreateWindow(app fyne.App, presenter Presenter) fyne.Window {
+func createWindow(app fyne.App, presenter Presenter) fyne.Window {
 	window := app.NewWindow(localization.App.Title)
 
 	appTabs := container.NewAppTabs(

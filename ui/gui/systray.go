@@ -7,7 +7,7 @@ import (
 	"github.com/getlantern/systray"
 )
 
-func SetupSystray(cancelFunc context.CancelFunc, presenter Presenter) {
+func setupSystray(cancelFunc context.CancelFunc, presenter Presenter) {
 	systray.SetTitle(localization.App.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
 	systray.SetTooltip(localization.App.Title)
 	systray.SetIcon(Icon)
