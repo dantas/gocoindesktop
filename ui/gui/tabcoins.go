@@ -1,11 +1,10 @@
 package gui
 
 import (
-	"fmt"
-
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/ui/format"
 )
 
 func createCoinsTab(window fyne.Window, presenter Presenter) *widget.Table {
@@ -36,7 +35,7 @@ func createCoinsTab(window fyne.Window, presenter Presenter) *widget.Table {
 			case 0:
 				content = coins[i.Row].Name
 			case 1:
-				content = fmt.Sprintf("%f", coins[i.Row].Price)
+				content = format.FormatPrice(coins[i.Row].Price)
 			}
 			label.SetText(content)
 			column[i.Col] = fyne.Max(column[i.Col], label.MinSize().Width)

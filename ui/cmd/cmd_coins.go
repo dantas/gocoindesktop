@@ -1,6 +1,10 @@
 package cmd
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/dantas/gocoindesktop/ui/format"
+)
 
 func (cl *commandLineController) handleCoins(command []string) bool {
 	if command[0] != "coins" {
@@ -10,7 +14,7 @@ func (cl *commandLineController) handleCoins(command []string) bool {
 	fmt.Println("Coins:")
 
 	for _, c := range cl.coins {
-		fmt.Printf("- %s : %f\n", c.Name, c.Price)
+		fmt.Printf("- %s : %s\n", c.Name, format.FormatPrice(c.Price))
 	}
 
 	return true
