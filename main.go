@@ -3,12 +3,12 @@ package main
 import (
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/infrastructure"
-	"github.com/dantas/gocoindesktop/ui/gui"
+	"github.com/dantas/gocoindesktop/ui/cmd"
 )
 
 func main() {
 	application := newApplicationCompositionRoot()
-	gui.RunGui(application)
+	cmd.RunCmd(application)
 }
 
 func newApplicationCompositionRoot() *domain.Application {
