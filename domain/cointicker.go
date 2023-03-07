@@ -8,8 +8,8 @@ type CoinTicker struct {
 	done   chan struct{}
 	source CoinSource
 	ticker *time.Ticker
-	coins  chan []Coin
-	errors chan error
+	Coins  chan []Coin
+	Errors chan error
 }
 
 func NewCoinTicker(source CoinSource) *CoinTicker {
@@ -17,8 +17,8 @@ func NewCoinTicker(source CoinSource) *CoinTicker {
 		done:   make(chan struct{}),
 		source: source,
 		ticker: time.NewTicker(time.Second),
-		coins:  make(chan []Coin),
-		errors: make(chan error),
+		Coins:  make(chan []Coin),
+		Errors: make(chan error),
 	}
 
 	ct.ticker.Stop()
@@ -27,8 +27,8 @@ func NewCoinTicker(source CoinSource) *CoinTicker {
 		for {
 			select {
 			case <-ct.done:
-				close(ct.coins)
-				close(ct.errors)
+				close(ct.Coins)
+				close(ct.Errors)
 				return
 			case <-ct.ticker.C:
 				ct.fetchCoins()
@@ -47,18 +47,10 @@ func (ct *CoinTicker) fetchCoins() {
 	coins, err := ct.source()
 
 	if err != nil {
-		ct.errors <- err
+		ct.Errors <- err
 	} else {
-		ct.coins <- coins
+		ct.Coins <- coins
 	}
-}
-
-func (ct *CoinTicker) Coins() <-chan []Coin {
-	return ct.coins
-}
-
-func (ct *CoinTicker) Errors() <-chan error {
-	return ct.errors
 }
 
 func (ct *CoinTicker) SetInterval(interval time.Duration) {

@@ -23,7 +23,7 @@ func NewApplication(coinTicker *CoinTicker, settingsStorage SettingsStorage) *Ap
 		application.settings = settings
 	}
 
-	utils.RedirectChannel(application.coinTicker.Errors(), application.errors)
+	utils.RedirectChannel(application.coinTicker.Errors, application.errors)
 
 	coinTicker.SetInterval(application.settings.Interval)
 
@@ -31,7 +31,7 @@ func NewApplication(coinTicker *CoinTicker, settingsStorage SettingsStorage) *Ap
 }
 
 func (app *Application) Coins() <-chan []Coin {
-	return app.coinTicker.Coins()
+	return app.coinTicker.Coins
 }
 
 func (app *Application) Errors() <-chan error {

@@ -35,7 +35,7 @@ func TestCoinTickerReturnsFetchedCoins(t *testing.T) {
 
 	coinTicker.SetInterval(1 * time.Millisecond)
 
-	for coins := range coinTicker.Coins() {
+	for coins := range coinTicker.Coins {
 		if !reflect.DeepEqual(coins, mockCoins) {
 			t.Errorf("Returned result is different from what is expected %v != %v\n", coins, mockCoins)
 		}
@@ -53,7 +53,7 @@ func TestCoinTickerReturnsFailure(t *testing.T) {
 
 	coinTicker.SetInterval(1 * time.Millisecond)
 
-	for err := range coinTicker.Errors() {
+	for err := range coinTicker.Errors {
 		if !errors.Is(err, errFoo) {
 			t.Errorf("Returned error is different from what is expected %v != %v\n", err, errFoo)
 		}
