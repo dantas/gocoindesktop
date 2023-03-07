@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/dantas/gocoindesktop/domain/utils"
+
 type Application struct {
 	coinTicker      *CoinTicker
 	settingsStorage SettingsStorage
@@ -21,11 +23,7 @@ func NewApplication(coinTicker *CoinTicker, settingsStorage SettingsStorage) *Ap
 		application.settings = settings
 	}
 
-	go func() {
-		for err := range application.coinTicker.Errors() {
-			application.errors <- err
-		}
-	}()
+	utils.RedirectChannel(application.coinTicker.Errors(), application.errors)
 
 	coinTicker.SetInterval(application.settings.Interval)
 
