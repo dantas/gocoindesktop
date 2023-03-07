@@ -13,7 +13,11 @@ No library for dependency injection. I'm manually constructing the composition r
 
 Development is on master because I'm the only sheriff in this town
 
-### Build Notes
+### Go Build Options
 
 There is also an experimental command line output. Use build tag **cmd** to enable it.
 
+### Build system requirements
+
+Ensure the following packages are installed to successfully build the app on ubuntu:
+    sudo apt-get install pkg-config xorg-dev libayatana-appindicator3-dev
