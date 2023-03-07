@@ -1,6 +1,6 @@
 package domain
 
-import "github.com/dantas/gocoindesktop/domain/utils"
+import "github.com/dantas/gocoindesktop/utils"
 
 type Application struct {
 	coinTicker      *CoinTicker
