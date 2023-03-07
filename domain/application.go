@@ -1,13 +1,13 @@
 package domain
 
 type Application struct {
-	coinTicker      CoinTicker
+	coinTicker      *CoinTicker
 	settingsStorage SettingsStorage
 	settings        Settings
 	errors          chan error
 }
 
-func NewApplication(coinTicker CoinTicker, settingsStorage SettingsStorage) *Application {
+func NewApplication(coinTicker *CoinTicker, settingsStorage SettingsStorage) *Application {
 	application := Application{
 		coinTicker:      coinTicker,
 		settingsStorage: settingsStorage,

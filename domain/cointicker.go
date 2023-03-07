@@ -4,14 +4,7 @@ import (
 	"time"
 )
 
-type CoinTicker interface {
-	Coins() <-chan []Coin
-	Errors() <-chan error
-	SetInterval(interval time.Duration)
-	Destroy()
-}
-
-type coinTicker struct {
+type CoinTicker struct {
 	done   chan struct{}
 	source CoinSource
 	ticker *time.Ticker
@@ -19,8 +12,8 @@ type coinTicker struct {
 	errors chan error
 }
 
-func NewCoinTicker(source CoinSource) CoinTicker {
-	ct := coinTicker{
+func NewCoinTicker(source CoinSource) *CoinTicker {
+	ct := CoinTicker{
 		done:   make(chan struct{}),
 		source: source,
 		ticker: time.NewTicker(time.Second),
@@ -50,7 +43,7 @@ func NewCoinTicker(source CoinSource) CoinTicker {
 	return &ct
 }
 
-func (ct *coinTicker) fetchCoins() {
+func (ct *CoinTicker) fetchCoins() {
 	coins, err := ct.source()
 
 	if err != nil {
@@ -60,18 +53,18 @@ func (ct *coinTicker) fetchCoins() {
 	}
 }
 
-func (ct *coinTicker) Coins() <-chan []Coin {
+func (ct *CoinTicker) Coins() <-chan []Coin {
 	return ct.coins
 }
 
-func (ct *coinTicker) Errors() <-chan error {
+func (ct *CoinTicker) Errors() <-chan error {
 	return ct.errors
 }
 
-func (ct *coinTicker) SetInterval(interval time.Duration) {
+func (ct *CoinTicker) SetInterval(interval time.Duration) {
 	ct.ticker.Reset(interval)
 }
 
-func (ct *coinTicker) Destroy() {
+func (ct *CoinTicker) Destroy() {
 	close(ct.done)
 }
