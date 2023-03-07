@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type CoinTicker struct {
+type coinTicker struct {
 	done   chan struct{}
 	source CoinSource
 	ticker *time.Ticker
@@ -12,8 +12,8 @@ type CoinTicker struct {
 	Errors chan error
 }
 
-func NewCoinTicker(source CoinSource) *CoinTicker {
-	ct := CoinTicker{
+func NewCoinTicker(source CoinSource) *coinTicker {
+	ct := coinTicker{
 		done:   make(chan struct{}),
 		source: source,
 		ticker: time.NewTicker(time.Second),
@@ -43,7 +43,7 @@ func NewCoinTicker(source CoinSource) *CoinTicker {
 	return &ct
 }
 
-func (ct *CoinTicker) fetchCoins() {
+func (ct *coinTicker) fetchCoins() {
 	coins, err := ct.source()
 
 	if err != nil {
@@ -53,10 +53,10 @@ func (ct *CoinTicker) fetchCoins() {
 	}
 }
 
-func (ct *CoinTicker) SetInterval(interval time.Duration) {
+func (ct *coinTicker) SetInterval(interval time.Duration) {
 	ct.ticker.Reset(interval)
 }
 
-func (ct *CoinTicker) Destroy() {
+func (ct *coinTicker) Destroy() {
 	close(ct.done)
 }
