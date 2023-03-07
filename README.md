@@ -19,5 +19,5 @@ There is also an experimental command line output. Use build tag **cmd** to enab
 
 ### Build system requirements
 
-Ensure the following packages are installed to successfully build the app on ubuntu:
+Ensure the following packages are installed to successfully build the app on ubuntu:  
     ```sudo apt-get install pkg-config xorg-dev libayatana-appindicator3-dev```
