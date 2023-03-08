@@ -1,37 +1,58 @@
 package domain
 
-import "github.com/dantas/gocoindesktop/utils"
-
 type Application struct {
-	coinTicker      *coinTicker
-	settingsStorage SettingsStorage
-	settings        Settings
-	errors          chan error
+	timer           *periodicTimer
+	settingsManager *settingsManager
+	coinSource      CoinSource
+
+	coins  chan []Coin
+	errors chan error
 }
 
-func NewApplication(coinTicker *coinTicker, settingsStorage SettingsStorage) *Application {
-	application := Application{
-		coinTicker:      coinTicker,
-		settingsStorage: settingsStorage,
-		errors:          make(chan error, 1),
+func NewApplication(timer *periodicTimer, settingsManager *settingsManager, coinSource CoinSource) *Application {
+	app := Application{
+		timer:           timer,
+		settingsManager: settingsManager,
+		coinSource:      coinSource,
+
+		coins:  make(chan []Coin),
+		errors: make(chan error, 1),
+
+		// alarms: make(chan []AlarmTriggered),
+		// alarmManager:    AlarmManager{},
 	}
 
-	if settings, err := settingsStorage.Load(); err != nil {
-		application.errors <- err
-		application.settings = newDefaultSettings()
+	go func() {
+		app.fetchCoins()
+
+		for range app.timer.tick {
+			// fmt.Println("Fetch")
+			app.fetchCoins()
+		}
+	}()
+
+	if err := app.settingsManager.Load(); err != nil {
+		app.errors <- err
+	}
+
+	app.timer.SetInterval(app.settingsManager.settings.Interval)
+
+	return &app
+}
+
+func (app *Application) fetchCoins() {
+	coins, err := app.coinSource()
+
+	if err != nil {
+		app.errors <- err
 	} else {
-		application.settings = settings
+		// TODO: Do we need to store coins somewhere in domain?
+		app.coins <- coins
 	}
-
-	utils.RedirectChannel(application.coinTicker.Errors, application.errors)
-
-	coinTicker.SetInterval(application.settings.Interval)
-
-	return &application
 }
 
 func (app *Application) Coins() <-chan []Coin {
-	return app.coinTicker.Coins
+	return app.coins
 }
 
 func (app *Application) Errors() <-chan error {
@@ -39,21 +60,24 @@ func (app *Application) Errors() <-chan error {
 }
 
 func (app *Application) Settings() Settings {
-	return app.settings
+	return app.settingsManager.settings
 }
 
 func (app *Application) SetSettings(settings Settings) error {
-	if e := app.settingsStorage.Save(settings); e != nil {
-		return e
+	err := app.settingsManager.SetSettings(settings)
+
+	if err == nil {
+		//app.coinTicker.SetInterval(settings.Interval)
+		app.timer.SetInterval(settings.Interval)
 	}
 
-	app.settings = settings
-	app.coinTicker.SetInterval(settings.Interval)
-
-	return nil
+	return err
 }
 
 func (app *Application) Destroy() {
+	// close(app.alarms)
+	close(app.coins)
 	close(app.errors)
-	app.coinTicker.Destroy()
+
+	app.timer.Destroy()
 }

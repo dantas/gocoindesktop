@@ -13,6 +13,6 @@ func main() {
 
 func newApplicationCompositionRoot() *domain.Application {
 	settingsStorage := infrastructure.NewJsonFileSettingsStorage("settings.json")
-	coinTicker := domain.NewCoinTicker(infrastructure.CoinMarketCapSource)
-	return domain.NewApplication(coinTicker, settingsStorage)
+	settingsManager := domain.NewSettingsManager(settingsStorage)
+	return domain.NewApplication(domain.NewPeriodicTimer(), settingsManager, infrastructure.CoinMarketCapSource)
 }
