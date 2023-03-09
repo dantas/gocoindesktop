@@ -26,10 +26,10 @@ func createWindow(app fyne.App, presenter Presenter) fyne.Window {
 			switch event {
 			case PRESENTER_SHOW_COINS:
 				window.Show()
-				appTabs.SelectTabIndex(0)
+				appTabs.SelectIndex(0)
 			case PRESENTER_SHOW_SETTINGS:
 				window.Show()
-				appTabs.SelectTabIndex(1)
+				appTabs.SelectIndex(1)
 			}
 		}
 	}()
