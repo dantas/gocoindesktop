@@ -70,10 +70,9 @@ func (app *Application) Settings() Settings {
 }
 
 func (app *Application) SetSettings(settings Settings) error {
-	err := app.settingsManager.SetSettings(settings)
+	err := app.settingsManager.Save(settings)
 
 	if err == nil {
-		//app.coinTicker.SetInterval(settings.Interval)
 		app.timer.SetInterval(settings.Interval)
 	}
 

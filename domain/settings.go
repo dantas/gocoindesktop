@@ -45,7 +45,7 @@ func (m *settingsManager) Load() error {
 	return err
 }
 
-func (m *settingsManager) SetSettings(settings Settings) error {
+func (m *settingsManager) Save(settings Settings) error {
 	if e := m.storage.Save(settings); e != nil {
 		return e
 	}
