@@ -1,11 +1,17 @@
 package domain
 
+import (
+	"github.com/dantas/gocoindesktop/domain/coin"
+)
+
+type CoinSource func() ([]coin.Coin, error)
+
 type Application struct {
 	timer           *periodicTimer
 	settingsManager *settingsManager
 	coinSource      CoinSource
 
-	coins  chan []Coin
+	coins  chan []coin.Coin
 	errors chan error
 }
 
@@ -15,7 +21,7 @@ func NewApplication(timer *periodicTimer, settingsManager *settingsManager, coin
 		settingsManager: settingsManager,
 		coinSource:      coinSource,
 
-		coins:  make(chan []Coin),
+		coins:  make(chan []coin.Coin),
 		errors: make(chan error, 1),
 
 		// alarms: make(chan []AlarmTriggered),
@@ -51,7 +57,7 @@ func (app *Application) fetchCoins() {
 	}
 }
 
-func (app *Application) Coins() <-chan []Coin {
+func (app *Application) Coins() <-chan []coin.Coin {
 	return app.coins
 }
 

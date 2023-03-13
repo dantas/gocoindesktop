@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/domain/coin"
 )
 
 type PresenterEvent int
@@ -18,7 +19,7 @@ type Presenter interface {
 	Events() <-chan PresenterEvent
 	Settings() domain.Settings
 	SetSettings(settings domain.Settings)
-	Coins() <-chan []domain.Coin
+	Coins() <-chan []coin.Coin
 	Errors() <-chan error
 }
 
@@ -59,7 +60,7 @@ func (p *presenter) SetSettings(settings domain.Settings) {
 	p.app.SetSettings(settings)
 }
 
-func (p *presenter) Coins() <-chan []domain.Coin {
+func (p *presenter) Coins() <-chan []coin.Coin {
 	return p.app.Coins()
 }
 

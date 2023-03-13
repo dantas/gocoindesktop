@@ -3,12 +3,12 @@ package gui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
-	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/domain/coin"
 	"github.com/dantas/gocoindesktop/ui/format"
 )
 
 func createCoinsTab(window fyne.Window, presenter Presenter) *widget.Table {
-	var coins []domain.Coin
+	var coins []coin.Coin
 	var table *widget.Table
 
 	var column [2]float32

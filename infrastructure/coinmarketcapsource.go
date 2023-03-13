@@ -5,12 +5,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/domain/coin"
 	"github.com/gocolly/colly/v2"
 )
 
-func CoinMarketCapSource() ([]domain.Coin, error) {
-	var resultCoins = make([]domain.Coin, 0)
+func CoinMarketCapSource() ([]coin.Coin, error) {
+	var resultCoins = make([]coin.Coin, 0)
 	var resultError error
 
 	collector := colly.NewCollector()
@@ -30,7 +30,7 @@ func CoinMarketCapSource() ([]domain.Coin, error) {
 		if err != nil {
 			resultError = err
 		} else {
-			resultCoins = append(resultCoins, domain.Coin{
+			resultCoins = append(resultCoins, coin.Coin{
 				Name:  scrappedName,
 				Price: priceFloat,
 			})

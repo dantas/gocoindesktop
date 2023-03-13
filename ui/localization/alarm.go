@@ -3,7 +3,7 @@ package localization
 import (
 	"fmt"
 
-	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/domain/coin"
 )
 
 var Alarm struct {
@@ -29,10 +29,10 @@ func init() {
 	}
 }
 
-func (a alarmEnterRange) Message(coin domain.Coin) string {
+func (a alarmEnterRange) Message(coin coin.Coin) string {
 	return fmt.Sprintf("Coin: %s - value: %.2f", coin.Name, coin.Price)
 }
 
-func (a alarmLeaveRange) Message(coin domain.Coin) string {
+func (a alarmLeaveRange) Message(coin coin.Coin) string {
 	return fmt.Sprintf("Coin: %s - value: %.2f", coin.Name, coin.Price)
 }

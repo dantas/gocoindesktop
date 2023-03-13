@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/domain/coin"
 )
 
 func RunCmd(application *domain.Application) {
@@ -49,7 +50,7 @@ func RunCmd(application *domain.Application) {
 }
 
 type commandLineController struct {
-	coins       []domain.Coin
+	coins       []coin.Coin
 	application *domain.Application
 }
 
