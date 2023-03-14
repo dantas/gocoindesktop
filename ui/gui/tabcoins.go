@@ -35,7 +35,7 @@ func createCoinsTab(window fyne.Window, presenter Presenter) *widget.Table {
 			case 0:
 				content = coins[i.Row].Name
 			case 1:
-				content = format.FormatPrice(coins[i.Row].Price)
+				label.SetText(localization.FormatPrice(coins[i.Row].Price))
 			}
 			label.SetText(content)
 			column[i.Col] = fyne.Max(column[i.Col], label.MinSize().Width)
