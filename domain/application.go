@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"github.com/dantas/gocoindesktop/domain/alarm"
 	"github.com/dantas/gocoindesktop/domain/coin"
 )
 
@@ -10,29 +11,29 @@ type Application struct {
 	timer           *periodicTimer
 	settingsManager *settingsManager
 	coinSource      CoinSource
+	alarmManager    *alarm.AlarmManager
 
 	coins  chan []coin.Coin
 	errors chan error
+	alarms chan alarm.TriggeredAlarm
 }
 
-func NewApplication(timer *periodicTimer, settingsManager *settingsManager, coinSource CoinSource) *Application {
+func NewApplication(timer *periodicTimer, settingsManager *settingsManager, coinSource CoinSource, alarmManager *alarm.AlarmManager) *Application {
 	app := Application{
 		timer:           timer,
 		settingsManager: settingsManager,
 		coinSource:      coinSource,
+		alarmManager:    alarmManager,
 
 		coins:  make(chan []coin.Coin),
 		errors: make(chan error, 1),
-
-		// alarms: make(chan []AlarmTriggered),
-		// alarmManager:    AlarmManager{},
+		alarms: make(chan alarm.TriggeredAlarm),
 	}
 
 	go func() {
 		app.fetchCoins()
 
 		for range app.timer.tick {
-			// fmt.Println("Fetch")
 			app.fetchCoins()
 		}
 	}()
@@ -51,9 +52,13 @@ func (app *Application) fetchCoins() {
 
 	if err != nil {
 		app.errors <- err
-	} else {
-		// TODO: Do we need to store coins somewhere in domain?
-		app.coins <- coins
+		return
+	}
+
+	app.coins <- coins
+
+	for _, alarm := range app.alarmManager.CheckAlarms(coins) {
+		app.alarms <- alarm
 	}
 }
 
@@ -63,6 +68,10 @@ func (app *Application) Coins() <-chan []coin.Coin {
 
 func (app *Application) Errors() <-chan error {
 	return app.errors
+}
+
+func (app *Application) Alarms() <-chan alarm.TriggeredAlarm {
+	return app.alarms
 }
 
 func (app *Application) Settings() Settings {
@@ -80,9 +89,9 @@ func (app *Application) SetSettings(settings Settings) error {
 }
 
 func (app *Application) Destroy() {
-	// close(app.alarms)
 	close(app.coins)
 	close(app.errors)
+	close(app.alarms)
 
 	app.timer.Destroy()
 }
