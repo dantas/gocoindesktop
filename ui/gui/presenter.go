@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/domain/alarm"
 	"github.com/dantas/gocoindesktop/domain/coin"
 )
 
@@ -21,6 +22,7 @@ type Presenter interface {
 	SetSettings(settings domain.Settings)
 	Coins() <-chan []coin.Coin
 	Errors() <-chan error
+	Alarms() <-chan alarm.TriggeredAlarm
 }
 
 type presenter struct {
@@ -66,4 +68,8 @@ func (p *presenter) Coins() <-chan []coin.Coin {
 
 func (p *presenter) Errors() <-chan error {
 	return p.app.Errors()
+}
+
+func (p *presenter) Alarms() <-chan alarm.TriggeredAlarm {
+	return p.app.Alarms()
 }

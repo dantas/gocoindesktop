@@ -3,36 +3,17 @@ package localization
 import (
 	"fmt"
 
-	"github.com/dantas/gocoindesktop/domain/coin"
+	"github.com/dantas/gocoindesktop/domain/alarm"
 )
 
-var Alarm struct {
-	EnterRange alarmEnterRange
-	LeaveRange alarmLeaveRange
+func AlarmTitle(alarm alarm.TriggeredAlarm) string {
+	return fmt.Sprintf("Alert for %s", alarm.Coin.Name)
 }
 
-type alarmEnterRange struct {
-	Title string
+func AlarmEnterRangeMessage(alarm alarm.TriggeredAlarm) string {
+	return fmt.Sprintf("Coin %s in range, price: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
 }
 
-type alarmLeaveRange struct {
-	Title string
-}
-
-func init() {
-	Alarm.EnterRange = alarmEnterRange{
-		Title: "Coin entering range",
-	}
-
-	Alarm.LeaveRange = alarmLeaveRange{
-		Title: "Coin leaving range",
-	}
-}
-
-func (a alarmEnterRange) Message(coin coin.Coin) string {
-	return fmt.Sprintf("Coin: %s - value: %.2f", coin.Name, coin.Price)
-}
-
-func (a alarmLeaveRange) Message(coin coin.Coin) string {
-	return fmt.Sprintf("Coin: %s - value: %.2f", coin.Name, coin.Price)
+func AlarmLeaveRangeMessage(alarm alarm.TriggeredAlarm) string {
+	return fmt.Sprintf("Coin %s out of range, price: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
 }

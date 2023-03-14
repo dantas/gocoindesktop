@@ -40,16 +40,22 @@ func createWindow(app fyne.App, presenter Presenter) fyne.Window {
 		}
 	}()
 
-	// go func() {
-	// 	for event := range presenter.AlarmEvents() {
-	// 		notification := fyne.NewNotification(
-	// 			localization.Alarm.EnterRange.Title,
-	// 			localization.Alarm.EnterRange.Message(event.Coin),
-	// 		)
+	go func() {
+		for alarm := range presenter.Alarms() {
+			title := localization.AlarmTitle(alarm)
 
-	// 		app.SendNotification(notification)
-	// 	}
-	// }()
+			var content string
+			if alarm.InRange {
+				content = localization.AlarmEnterRangeMessage(alarm)
+			} else {
+				content = localization.AlarmLeaveRangeMessage(alarm)
+			}
+
+			app.SendNotification(
+				fyne.NewNotification(title, content),
+			)
+		}
+	}()
 
 	if presenter.Settings().ShowWindowOnOpen {
 		window.Show()
