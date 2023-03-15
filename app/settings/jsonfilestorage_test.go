@@ -7,14 +7,14 @@ import (
 	"time"
 )
 
-func TestFileSettingsStorageIsCorrectlySavingAndLoading(t *testing.T) {
+func TestFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	location := path.Join(os.TempDir(), "preferences.json")
 
-	if e := os.Remove(location); e != nil {
+	if e := os.Remove(location); e != nil && !os.IsNotExist(e) {
 		t.Errorf("Error removing file from temporary storage, test setup error: %v", e)
 	}
 
-	storage := NewJsonFileSettingsStorage(location)
+	storage := NewJsonFileStorage(location)
 
 	preference := Settings{
 		Interval:         3 * time.Hour,
