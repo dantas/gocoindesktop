@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/app/settings"
 )
 
 func (cl *commandLineController) handleSet(command []string) bool {
@@ -24,7 +24,7 @@ func (cl *commandLineController) handleSet(command []string) bool {
 		return false
 	}
 
-	settings := domain.Settings{
+	settings := settings.Settings{
 		Interval: duration,
 	}
 

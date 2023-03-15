@@ -3,7 +3,7 @@
 package ui
 
 import (
-	"github.com/dantas/gocoindesktop/apo"
+	"github.com/dantas/gocoindesktop/app"
 	"github.com/dantas/gocoindesktop/ui/cmd"
 )
 

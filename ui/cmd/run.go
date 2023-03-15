@@ -6,11 +6,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dantas/gocoindesktop/domain"
-	"github.com/dantas/gocoindesktop/domain/coin"
+	"github.com/dantas/gocoindesktop/app"
+	"github.com/dantas/gocoindesktop/app/coin"
 )
 
-func RunCmd(application *domain.Application) {
+func RunCmd(application *app.Application) {
 	// return from command structure to print it here
 	fmt.Println("Welcome to Go Coin Desktop")
 	fmt.Println("Available commands:")
@@ -51,7 +51,7 @@ func RunCmd(application *domain.Application) {
 
 type commandLineController struct {
 	coins       []coin.Coin
-	application *domain.Application
+	application *app.Application
 }
 
 // Quit command needs be handled here, because is nigh impossible to interrupt a scanner
