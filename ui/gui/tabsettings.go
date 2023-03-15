@@ -11,19 +11,19 @@ import (
 func createSettingsTab(presenter Presenter) *widget.Form {
 	intervalOption := presenter.Settings().Interval
 	intervalWidget := widget.NewFormItem(
-		localization.Settings.UpdateInterval,
+		localization.SettingsUpdateInterval,
 		createIntervalOption(&intervalOption),
 	)
 
 	windowOnOpen := presenter.Settings().ShowWindowOnOpen
 	showWindowOnOpenOption := widget.NewFormItem(
-		localization.Settings.ShowWindowOnOpen.FormLabel,
+		localization.SettingsShowWindowOnOpen,
 		createShowWindowOnOpenOption(&windowOnOpen),
 	)
 
 	form := widget.NewForm(intervalWidget, showWindowOnOpenOption)
 
-	form.SubmitText = localization.Settings.SubmitButton
+	form.SubmitText = localization.SettingsSubmitButton
 	form.OnSubmit = func() {
 		newSettings := domain.Settings{
 			Interval:         intervalOption,
@@ -41,7 +41,7 @@ func createShowWindowOnOpenOption(show *bool) *widget.Check {
 		*show = isChecked
 	}
 
-	widget := widget.NewCheck(localization.Settings.ShowWindowOnOpen.OptionLabel, onCheck)
+	widget := widget.NewCheck(localization.SettingsShowWindowOnOpenOption, onCheck)
 
 	widget.Checked = *show
 
@@ -50,24 +50,24 @@ func createShowWindowOnOpenOption(show *bool) *widget.Check {
 
 func createIntervalOption(interval *time.Duration) *widget.Select {
 	options := []string{
-		localization.Settings.UpdateIntervalOptions.OneMin,
-		localization.Settings.UpdateIntervalOptions.TwoMin,
-		localization.Settings.UpdateIntervalOptions.FiveMin,
-		localization.Settings.UpdateIntervalOptions.TenMin,
-		localization.Settings.UpdateIntervalOptions.OneHour,
+		localization.Settings1Min,
+		localization.Settings2Min,
+		localization.Settings5Min,
+		localization.Settings10Min,
+		localization.Settings1Hour,
 	}
 
 	onSelected := func(selected string) {
 		switch selected {
-		case localization.Settings.UpdateIntervalOptions.OneMin:
+		case localization.Settings1Min:
 			*interval = 1 * time.Minute
-		case localization.Settings.UpdateIntervalOptions.TwoMin:
+		case localization.Settings2Min:
 			*interval = 2 * time.Minute
-		case localization.Settings.UpdateIntervalOptions.FiveMin:
+		case localization.Settings5Min:
 			*interval = 5 * time.Minute
-		case localization.Settings.UpdateIntervalOptions.TenMin:
+		case localization.Settings10Min:
 			*interval = 10 * time.Minute
-		case localization.Settings.UpdateIntervalOptions.OneHour:
+		case localization.Settings1Hour:
 			*interval = 1 * time.Hour
 		}
 	}

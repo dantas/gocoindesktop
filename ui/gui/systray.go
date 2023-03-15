@@ -8,14 +8,14 @@ import (
 )
 
 func setupSystray(cancelFunc context.CancelFunc, presenter Presenter) {
-	systray.SetTitle(localization.App.Title) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
-	systray.SetTooltip(localization.App.Title)
+	systray.SetTitle(localization.AppTitle) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
+	systray.SetTooltip(localization.AppTitle)
 	systray.SetIcon(Icon)
 
-	showCoinsItem := systray.AddMenuItem(localization.Systray.Coins, localization.Systray.Coins)
-	showSettingsItem := systray.AddMenuItem(localization.Systray.Settings, localization.Systray.Settings)
+	showCoinsItem := systray.AddMenuItem(localization.SystrayCoins, localization.SystrayCoins)
+	showSettingsItem := systray.AddMenuItem(localization.SystraySettings, localization.SystraySettings)
 	systray.AddSeparator()
-	quitItem := systray.AddMenuItem(localization.Systray.Quit, localization.Systray.Quit)
+	quitItem := systray.AddMenuItem(localization.SystrayQuit, localization.SystrayQuit)
 
 	go func() {
 		for {

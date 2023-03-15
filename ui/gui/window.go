@@ -8,16 +8,16 @@ import (
 )
 
 func createWindow(app fyne.App, presenter Presenter) fyne.Window {
-	window := app.NewWindow(localization.App.Title)
+	window := app.NewWindow(localization.AppTitle)
 
 	appTabs := container.NewAppTabs(
-		container.NewTabItem(localization.Window.TabCoins, createCoinsTab(window, presenter)),
-		container.NewTabItem(localization.Window.TabSetting, createSettingsTab(presenter)),
+		container.NewTabItem(localization.TabCoins, createCoinsTab(window, presenter)),
+		container.NewTabItem(localization.TabSettings, createSettingsTab(presenter)),
 	)
 
 	window.SetContent(appTabs)
 
-	window.Resize(fyne.NewSize(400, 300))
+	window.Resize(fyne.NewSize(600, 300))
 	window.SetCloseIntercept(window.Hide)
 	window.CenterOnScreen()
 
