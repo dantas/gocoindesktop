@@ -1,11 +1,9 @@
-package infrastructure
+package settings
 
 import (
 	"encoding/json"
 	"os"
 	"time"
-
-	"github.com/dantas/gocoindesktop/domain"
 )
 
 type jsonFileFormat struct {
@@ -13,17 +11,17 @@ type jsonFileFormat struct {
 	ShowWindowOnOpen bool
 }
 
-type jsonFileSettingsStorage struct {
+type jsonFileStorage struct {
 	path string
 }
 
-func NewJsonFileSettingsStorage(path string) domain.SettingsStorage {
-	return jsonFileSettingsStorage{
+func NewJsonFileStorage(path string) SettingsStorage {
+	return jsonFileStorage{
 		path: path,
 	}
 }
 
-func (storage jsonFileSettingsStorage) Save(pref domain.Settings) error {
+func (storage jsonFileStorage) Save(pref Settings) error {
 	var file *os.File
 	var e error
 
@@ -47,12 +45,12 @@ func (storage jsonFileSettingsStorage) Save(pref domain.Settings) error {
 	return nil
 }
 
-func (storage jsonFileSettingsStorage) Load() (domain.Settings, error) {
+func (storage jsonFileStorage) Load() (Settings, error) {
 	var file *os.File
 	var e error
 
 	if file, e = os.Open(storage.path); e != nil {
-		return domain.Settings{}, e
+		return Settings{}, e
 	}
 
 	defer file.Close()
@@ -62,10 +60,10 @@ func (storage jsonFileSettingsStorage) Load() (domain.Settings, error) {
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return domain.Settings{}, e
+		return Settings{}, e
 	}
 
-	return domain.Settings{
+	return Settings{
 		Interval:         time.Duration(decoded.Interval),
 		ShowWindowOnOpen: decoded.ShowWindowOnOpen,
 	}, nil

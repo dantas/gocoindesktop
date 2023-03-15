@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/dantas/gocoindesktop/app/settings"
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/domain/alarm"
 	"github.com/dantas/gocoindesktop/domain/coin"
@@ -18,8 +19,8 @@ type Presenter interface {
 	OnSystrayClickSettings()
 	OnSystrayClickQuit()
 	Events() <-chan PresenterEvent
-	Settings() domain.Settings
-	SetSettings(settings domain.Settings)
+	Settings() settings.Settings
+	SetSettings(settings settings.Settings)
 	Coins() <-chan []coin.Coin
 	Errors() <-chan error
 	Alarms() <-chan alarm.TriggeredAlarm
@@ -54,11 +55,11 @@ func (p *presenter) Events() <-chan PresenterEvent {
 	return p.events
 }
 
-func (p *presenter) Settings() domain.Settings {
+func (p *presenter) Settings() settings.Settings {
 	return p.app.Settings()
 }
 
-func (p *presenter) SetSettings(settings domain.Settings) {
+func (p *presenter) SetSettings(settings settings.Settings) {
 	p.app.SetSettings(settings)
 }
 

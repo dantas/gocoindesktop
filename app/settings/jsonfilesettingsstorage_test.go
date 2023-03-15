@@ -1,12 +1,10 @@
-package infrastructure
+package settings
 
 import (
 	"os"
 	"path"
 	"testing"
 	"time"
-
-	"github.com/dantas/gocoindesktop/domain"
 )
 
 func TestFileSettingsStorageIsCorrectlySavingAndLoading(t *testing.T) {
@@ -18,7 +16,7 @@ func TestFileSettingsStorageIsCorrectlySavingAndLoading(t *testing.T) {
 
 	storage := NewJsonFileSettingsStorage(location)
 
-	preference := domain.Settings{
+	preference := Settings{
 		Interval:         3 * time.Hour,
 		ShowWindowOnOpen: true,
 	}
