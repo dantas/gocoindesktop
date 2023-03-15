@@ -1,4 +1,4 @@
-//go:build gui || !cmd
+//go:build !cmd
 
 package ui
 
