@@ -4,10 +4,11 @@ import (
 	"github.com/dantas/gocoindesktop/app/alarm"
 	"github.com/dantas/gocoindesktop/app/coin"
 	"github.com/dantas/gocoindesktop/app/settings"
+	"github.com/dantas/gocoindesktop/app/timer"
 )
 
 type Application struct {
-	timer              *periodicTimer
+	timer              *timer.PeriodicTimer
 	settingsRepository *settings.Repository
 	coinSource         coin.CoinSource
 	alarmManager       *alarm.AlarmManager
@@ -18,7 +19,7 @@ type Application struct {
 }
 
 func NewApplication(
-	timer *periodicTimer,
+	timer *timer.PeriodicTimer,
 	settingsRepository *settings.Repository,
 	coinSource coin.CoinSource,
 	alarmManager *alarm.AlarmManager,
@@ -37,7 +38,7 @@ func NewApplication(
 	go func() {
 		app.fetchCoins()
 
-		for range app.timer.tick {
+		for range app.timer.Tick() {
 			app.fetchCoins()
 		}
 	}()
