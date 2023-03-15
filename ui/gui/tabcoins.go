@@ -4,7 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	"github.com/dantas/gocoindesktop/domain/coin"
+	"github.com/dantas/gocoindesktop/app/coin"
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 

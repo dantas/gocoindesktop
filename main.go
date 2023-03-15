@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/dantas/gocoindesktop/app/alarm"
+	"github.com/dantas/gocoindesktop/app/coin"
 	"github.com/dantas/gocoindesktop/app/settings"
 	"github.com/dantas/gocoindesktop/domain"
-	"github.com/dantas/gocoindesktop/infrastructure"
 	"github.com/dantas/gocoindesktop/ui"
 )
 
@@ -18,5 +18,5 @@ func newApplicationCompositionRoot() *domain.Application {
 	repository := settings.NewRepository(settingsStorage)
 	alarmStorage := alarm.NewAlarmStorage("alarm.json")
 	alarmManager := alarm.NewAlarmManager(&alarmStorage)
-	return domain.NewApplication(domain.NewPeriodicTimer(), repository, infrastructure.CoinMarketCapSource, alarmManager)
+	return domain.NewApplication(domain.NewPeriodicTimer(), repository, coin.CoinMarketCapSource, alarmManager)
 }

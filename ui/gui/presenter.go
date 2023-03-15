@@ -2,9 +2,9 @@ package gui
 
 import (
 	"github.com/dantas/gocoindesktop/app/alarm"
+	"github.com/dantas/gocoindesktop/app/coin"
 	"github.com/dantas/gocoindesktop/app/settings"
 	"github.com/dantas/gocoindesktop/domain"
-	"github.com/dantas/gocoindesktop/domain/coin"
 )
 
 type PresenterEvent int

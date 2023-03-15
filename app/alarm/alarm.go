@@ -1,6 +1,6 @@
 package alarm
 
-import "github.com/dantas/gocoindesktop/domain/coin"
+import "github.com/dantas/gocoindesktop/app/coin"
 
 type Alarm struct {
 	Name       string

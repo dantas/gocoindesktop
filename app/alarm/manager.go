@@ -1,6 +1,6 @@
 package alarm
 
-import "github.com/dantas/gocoindesktop/domain/coin"
+import "github.com/dantas/gocoindesktop/app/coin"
 
 // TODO: Find a better name than manager
 type AlarmManager struct {

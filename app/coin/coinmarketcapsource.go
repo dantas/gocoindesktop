@@ -1,16 +1,15 @@
-package infrastructure
+package coin
 
 import (
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/dantas/gocoindesktop/domain/coin"
 	"github.com/gocolly/colly/v2"
 )
 
-func CoinMarketCapSource() ([]coin.Coin, error) {
-	var resultCoins = make([]coin.Coin, 0)
+func CoinMarketCapSource() ([]Coin, error) {
+	var resultCoins = make([]Coin, 0)
 	var resultError error
 
 	collector := colly.NewCollector()
@@ -30,7 +29,7 @@ func CoinMarketCapSource() ([]coin.Coin, error) {
 		if err != nil {
 			resultError = err
 		} else {
-			resultCoins = append(resultCoins, coin.Coin{
+			resultCoins = append(resultCoins, Coin{
 				Name:  scrappedName,
 				Price: priceFloat,
 			})

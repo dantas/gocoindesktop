@@ -2,16 +2,14 @@ package domain
 
 import (
 	"github.com/dantas/gocoindesktop/app/alarm"
+	"github.com/dantas/gocoindesktop/app/coin"
 	"github.com/dantas/gocoindesktop/app/settings"
-	"github.com/dantas/gocoindesktop/domain/coin"
 )
-
-type CoinSource func() ([]coin.Coin, error)
 
 type Application struct {
 	timer              *periodicTimer
 	settingsRepository *settings.Repository
-	coinSource         CoinSource
+	coinSource         coin.CoinSource
 	alarmManager       *alarm.AlarmManager
 
 	coins  chan []coin.Coin
@@ -22,7 +20,7 @@ type Application struct {
 func NewApplication(
 	timer *periodicTimer,
 	settingsRepository *settings.Repository,
-	coinSource CoinSource,
+	coinSource coin.CoinSource,
 	alarmManager *alarm.AlarmManager,
 ) *Application {
 	app := Application{
