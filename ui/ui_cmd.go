@@ -3,10 +3,10 @@
 package ui
 
 import (
-	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/apo"
 	"github.com/dantas/gocoindesktop/ui/cmd"
 )
 
-func Run(application *domain.Application) {
+func Run(application *app.Application) {
 	cmd.RunCmd(application)
 }

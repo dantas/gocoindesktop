@@ -1,10 +1,10 @@
 package gui
 
 import (
+	"github.com/dantas/gocoindesktop/app"
 	"github.com/dantas/gocoindesktop/app/alarm"
 	"github.com/dantas/gocoindesktop/app/coin"
 	"github.com/dantas/gocoindesktop/app/settings"
-	"github.com/dantas/gocoindesktop/domain"
 )
 
 type PresenterEvent int
@@ -27,11 +27,11 @@ type Presenter interface {
 }
 
 type presenter struct {
-	app    *domain.Application
+	app    *app.Application
 	events chan PresenterEvent
 }
 
-func newPresenter(app *domain.Application) Presenter {
+func newPresenter(app *app.Application) Presenter {
 	return &presenter{
 		app:    app,
 		events: make(chan PresenterEvent),
