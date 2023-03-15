@@ -5,7 +5,7 @@ package localization
 import (
 	"fmt"
 
-	"github.com/dantas/gocoindesktop/domain/alarm"
+	"github.com/dantas/gocoindesktop/app/alarm"
 )
 
 // Systray

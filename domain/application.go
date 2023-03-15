@@ -1,8 +1,8 @@
 package domain
 
 import (
+	"github.com/dantas/gocoindesktop/app/alarm"
 	"github.com/dantas/gocoindesktop/app/settings"
-	"github.com/dantas/gocoindesktop/domain/alarm"
 	"github.com/dantas/gocoindesktop/domain/coin"
 )
 
