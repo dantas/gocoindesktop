@@ -8,11 +8,6 @@ type AlarmManager struct {
 	entries map[string]entry
 }
 
-type AlarmStorage interface {
-	Save(alarms []Alarm) error
-	Load() ([]Alarm, error)
-}
-
 type entry struct {
 	alarm   Alarm
 	inRange bool

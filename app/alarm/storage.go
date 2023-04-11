@@ -5,6 +5,11 @@ import (
 	"os"
 )
 
+type AlarmStorage interface {
+	Save(alarms []Alarm) error
+	Load() ([]Alarm, error)
+}
+
 func NewAlarmStorage(path string) AlarmStorage {
 	return &JsonFileAlarmStorage{
 		path: path,
