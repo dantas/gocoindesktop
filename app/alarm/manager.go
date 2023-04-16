@@ -39,7 +39,7 @@ func (manager *AlarmManager) Load() error {
 }
 
 func (manager *AlarmManager) save() error {
-	alarms := make([]Alarm, len(manager.entries))
+	alarms := make([]Alarm, 0, len(manager.entries))
 
 	for _, v := range manager.entries {
 		alarms = append(alarms, v.alarm)
