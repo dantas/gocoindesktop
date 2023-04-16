@@ -4,10 +4,11 @@ import (
 	"context"
 
 	"github.com/dantas/gocoindesktop/ui/localization"
+	"github.com/dantas/gocoindesktop/ui/presenter"
 	"github.com/getlantern/systray"
 )
 
-func setupSystray(cancelFunc context.CancelFunc, presenter Presenter) {
+func setupSystray(cancelFunc context.CancelFunc, presenter presenter.Presenter) {
 	systray.SetTitle(localization.AppTitle) // app_indicator_set_label: assertion 'IS_APP_INDICATOR (self)' failed
 	systray.SetTooltip(localization.AppTitle)
 	systray.SetIcon(Icon)

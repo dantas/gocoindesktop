@@ -6,10 +6,11 @@ import (
 	"fyne.io/fyne/v2"
 	fyneApp "fyne.io/fyne/v2/app"
 	"github.com/dantas/gocoindesktop/app"
+	"github.com/dantas/gocoindesktop/ui/presenter"
 	"github.com/getlantern/systray"
 )
 
-func RunGui(application *app.Application) {
+func RunFyne(application *app.Application) {
 	fyneApp := fyneApp.NewWithID("gocoindesktop")
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
@@ -25,7 +26,7 @@ func RunGui(application *app.Application) {
 }
 
 func setupUi(cancelFunc context.CancelFunc, fyneApp fyne.App, application *app.Application) {
-	presenter := newPresenter(application)
+	presenter := presenter.NewPresenter(application)
 	createWindow(fyneApp, presenter) // TODO: Do we need to keep a reference to the window?
 	setupSystray(cancelFunc, presenter)
 }

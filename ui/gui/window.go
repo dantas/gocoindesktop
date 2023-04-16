@@ -5,14 +5,15 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"github.com/dantas/gocoindesktop/ui/localization"
+	"github.com/dantas/gocoindesktop/ui/presenter"
 )
 
-func createWindow(app fyne.App, presenter Presenter) fyne.Window {
+func createWindow(app fyne.App, pres presenter.Presenter) fyne.Window {
 	window := app.NewWindow(localization.AppTitle)
 
 	appTabs := container.NewAppTabs(
-		container.NewTabItem(localization.TabCoins, createCoinsTab(window, presenter)),
-		container.NewTabItem(localization.TabSettings, createSettingsTab(presenter)),
+		container.NewTabItem(localization.TabCoins, createCoinsTab(window, pres)),
+		container.NewTabItem(localization.TabSettings, createSettingsTab(pres)),
 	)
 
 	window.SetContent(appTabs)
@@ -22,12 +23,12 @@ func createWindow(app fyne.App, presenter Presenter) fyne.Window {
 	window.CenterOnScreen()
 
 	go func() {
-		for event := range presenter.Events() {
+		for event := range pres.Events() {
 			switch event {
-			case PRESENTER_SHOW_COINS:
+			case presenter.PRESENTER_SHOW_COINS:
 				window.Show()
 				appTabs.SelectIndex(0)
-			case PRESENTER_SHOW_SETTINGS:
+			case presenter.PRESENTER_SHOW_SETTINGS:
 				window.Show()
 				appTabs.SelectIndex(1)
 			}
@@ -35,13 +36,13 @@ func createWindow(app fyne.App, presenter Presenter) fyne.Window {
 	}()
 
 	go func() {
-		for err := range presenter.Errors() {
+		for err := range pres.Errors() {
 			dialog.ShowError(err, window)
 		}
 	}()
 
 	go func() {
-		for alarm := range presenter.TriggeredAlarms() {
+		for alarm := range pres.TriggeredAlarms() {
 			title := localization.AlarmTitle(alarm)
 
 			var content string
@@ -57,7 +58,7 @@ func createWindow(app fyne.App, presenter Presenter) fyne.Window {
 		}
 	}()
 
-	if presenter.Settings().ShowWindowOnOpen {
+	if pres.Settings().ShowWindowOnOpen {
 		window.Show()
 	}
 

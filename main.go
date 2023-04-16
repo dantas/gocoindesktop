@@ -6,12 +6,12 @@ import (
 	"github.com/dantas/gocoindesktop/app/coin"
 	"github.com/dantas/gocoindesktop/app/settings"
 	"github.com/dantas/gocoindesktop/app/timer"
-	"github.com/dantas/gocoindesktop/ui"
+	"github.com/dantas/gocoindesktop/ui/gui"
 )
 
 func main() {
 	application := newApplicationCompositionRoot()
-	ui.Run(application)
+	gui.RunFyne(application)
 }
 
 func newApplicationCompositionRoot() *app.Application {

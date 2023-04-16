@@ -6,16 +6,17 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/app/settings"
 	"github.com/dantas/gocoindesktop/ui/localization"
+	"github.com/dantas/gocoindesktop/ui/presenter"
 )
 
-func createSettingsTab(presenter Presenter) *widget.Form {
-	intervalOption := presenter.Settings().Interval
+func createSettingsTab(pres presenter.Presenter) *widget.Form {
+	intervalOption := pres.Settings().Interval
 	intervalWidget := widget.NewFormItem(
 		localization.SettingsUpdateInterval,
 		createIntervalOption(&intervalOption),
 	)
 
-	windowOnOpen := presenter.Settings().ShowWindowOnOpen
+	windowOnOpen := pres.Settings().ShowWindowOnOpen
 	showWindowOnOpenOption := widget.NewFormItem(
 		localization.SettingsShowWindowOnOpen,
 		createShowWindowOnOpenOption(&windowOnOpen),
@@ -30,7 +31,7 @@ func createSettingsTab(presenter Presenter) *widget.Form {
 			ShowWindowOnOpen: windowOnOpen,
 		}
 
-		presenter.SetSettings(newSettings)
+		pres.SetSettings(newSettings)
 	}
 
 	return form
