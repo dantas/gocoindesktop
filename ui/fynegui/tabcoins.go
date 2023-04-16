@@ -79,7 +79,7 @@ func scheduleSynchronization() {
 
 }
 
-func drawContent(i widget.TableCellID, rowViews *rowViews, entry presenter.PresenterEntry) {
+func drawContent(i widget.TableCellID, rowViews *rowViews, entry presenter.Entry) {
 	switch i.Col {
 	case 0:
 		rowViews.label.SetText(entry.Name)
@@ -118,7 +118,7 @@ func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table 
 	// TODO: Save state in presenter, add timer to reset save timeout
 	// Diferenciar entre UI state e alarm state
 
-	var entries []presenter.PresenterEntry
+	var entries []presenter.Entry
 
 	go func() {
 		for entries = range pres.Entries() {

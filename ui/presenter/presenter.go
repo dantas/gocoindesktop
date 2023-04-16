@@ -5,15 +5,14 @@ import (
 	"github.com/dantas/gocoindesktop/app/settings"
 )
 
-type PresenterEvent int
+type Event int
 
 const (
-	PRESENTER_SHOW_COINS    PresenterEvent = 0
-	PRESENTER_SHOW_SETTINGS PresenterEvent = iota
+	PRESENTER_SHOW_COINS    Event = 0
+	PRESENTER_SHOW_SETTINGS Event = iota
 )
 
-// Find a better name?
-type PresenterEntry struct {
+type Entry struct {
 	Name       string
 	Price      float64
 	IsChecked  bool
@@ -25,10 +24,10 @@ type Presenter interface {
 	OnSystrayClickCoins()
 	OnSystrayClickSettings()
 	OnSystrayClickQuit()
-	Events() <-chan PresenterEvent
+	Events() <-chan Event
 	Settings() settings.Settings
 	SetSettings(settings settings.Settings)
 	Errors() <-chan error
-	Entries() <-chan []PresenterEntry
+	Entries() <-chan []Entry
 	TriggeredAlarms() <-chan alarm.TriggeredAlarm
 }

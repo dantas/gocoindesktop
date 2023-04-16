@@ -8,15 +8,15 @@ import (
 
 type fynePresenter struct {
 	app     *app.Application
-	events  chan PresenterEvent
-	entries chan []PresenterEntry
+	events  chan Event
+	entries chan []Entry
 }
 
 func NewPresenter(app *app.Application) Presenter {
 	presenter := fynePresenter{
 		app:     app,
-		events:  make(chan PresenterEvent),
-		entries: make(chan []PresenterEntry),
+		events:  make(chan Event),
+		entries: make(chan []Entry),
 	}
 
 	go func() {
@@ -43,7 +43,7 @@ func (p *fynePresenter) OnSystrayClickQuit() {
 	p.app.Destroy()
 }
 
-func (p *fynePresenter) Events() <-chan PresenterEvent {
+func (p *fynePresenter) Events() <-chan Event {
 	return p.events
 }
 
@@ -59,7 +59,7 @@ func (p *fynePresenter) Errors() <-chan error {
 	return p.app.Errors()
 }
 
-func (p *fynePresenter) Entries() <-chan []PresenterEntry {
+func (p *fynePresenter) Entries() <-chan []Entry {
 	return p.entries
 }
 
@@ -67,11 +67,11 @@ func (p *fynePresenter) TriggeredAlarms() <-chan alarm.TriggeredAlarm {
 	return p.app.TriggeredAlarms()
 }
 
-func toSlicePresenterEntry(sliceCoinAlarm []app.CoinAndAlarm) []PresenterEntry {
-	entries := make([]PresenterEntry, 0, len(sliceCoinAlarm))
+func toSlicePresenterEntry(sliceCoinAlarm []app.CoinAndAlarm) []Entry {
+	entries := make([]Entry, 0, len(sliceCoinAlarm))
 
 	for _, coinAlarm := range sliceCoinAlarm {
-		entry := PresenterEntry{
+		entry := Entry{
 			Name:  coinAlarm.Coin.Name,
 			Price: coinAlarm.Coin.Price,
 		}
