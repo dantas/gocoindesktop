@@ -1,4 +1,4 @@
-package gui
+package fynegui
 
 import (
 	"fyne.io/fyne/v2"

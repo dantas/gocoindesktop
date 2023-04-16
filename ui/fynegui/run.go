@@ -1,4 +1,4 @@
-package gui
+package fynegui
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/getlantern/systray"
 )
 
-func RunFyne(application *app.Application) {
+func Run(application *app.Application) {
 	fyneApp := fyneApp.NewWithID("gocoindesktop")
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
