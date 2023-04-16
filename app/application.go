@@ -15,7 +15,7 @@ type Application struct {
 
 	coins  chan []coin.Coin
 	errors chan error
-	alarms chan alarm.TriggeredAlarm
+	triggeredAlarms chan alarm.TriggeredAlarm
 }
 
 func NewApplication(
@@ -32,7 +32,7 @@ func NewApplication(
 
 		coins:  make(chan []coin.Coin),
 		errors: make(chan error, 1),
-		alarms: make(chan alarm.TriggeredAlarm),
+		triggeredAlarms: make(chan alarm.TriggeredAlarm),
 	}
 
 	go func() {
@@ -65,7 +65,7 @@ func (app *Application) fetchCoins() {
 	app.coins <- coins
 
 	for _, alarm := range app.alarmManager.CheckAlarms(coins) {
-		app.alarms <- alarm
+		app.triggeredAlarms <- alarm
 	}
 }
 
@@ -77,8 +77,8 @@ func (app *Application) Errors() <-chan error {
 	return app.errors
 }
 
-func (app *Application) Alarms() <-chan alarm.TriggeredAlarm {
-	return app.alarms
+func (app *Application) TriggeredAlarms() <-chan alarm.TriggeredAlarm {
+	return app.triggeredAlarms
 }
 
 func (app *Application) Settings() settings.Settings {
@@ -99,7 +99,7 @@ func (app *Application) SetSettings(settings settings.Settings) error {
 func (app *Application) Destroy() {
 	close(app.coins)
 	close(app.errors)
-	close(app.alarms)
+	close(app.triggeredAlarms)
 
 	app.timer.Destroy()
 }

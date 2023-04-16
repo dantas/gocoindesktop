@@ -23,7 +23,7 @@ type Presenter interface {
 	SetSettings(settings settings.Settings)
 	Coins() <-chan []coin.Coin
 	Errors() <-chan error
-	Alarms() <-chan alarm.TriggeredAlarm
+	TriggeredAlarms() <-chan alarm.TriggeredAlarm
 }
 
 type presenter struct {
@@ -71,6 +71,6 @@ func (p *presenter) Errors() <-chan error {
 	return p.app.Errors()
 }
 
-func (p *presenter) Alarms() <-chan alarm.TriggeredAlarm {
-	return p.app.Alarms()
+func (p *presenter) TriggeredAlarms() <-chan alarm.TriggeredAlarm {
+	return p.app.TriggeredAlarms()
 }

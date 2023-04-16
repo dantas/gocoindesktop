@@ -41,7 +41,7 @@ func createWindow(app fyne.App, presenter Presenter) fyne.Window {
 	}()
 
 	go func() {
-		for alarm := range presenter.Alarms() {
+		for alarm := range presenter.TriggeredAlarms() {
 			title := localization.AlarmTitle(alarm)
 
 			var content string
