@@ -64,15 +64,14 @@ func (app *Application) Settings() settings.Settings {
 	return app.loadSettings()
 }
 
-func (app *Application) SetSettings(settings settings.Settings) error {
+func (app *Application) SetSettings(settings settings.Settings) {
 	err := app.settingsStorage.Save(settings)
 
 	if err == nil {
 		app.timer.SetInterval(settings.Interval)
+	} else {
+		app.errors <- err
 	}
-
-	// Return error or notify channel of error?
-	return err
 }
 
 func (app *Application) Destroy() {
