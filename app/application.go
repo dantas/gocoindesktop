@@ -8,10 +8,10 @@ import (
 )
 
 type Application struct {
-	timer              *timer.PeriodicTimer
-	settingsRepository *settings.Repository
-	coinSource         coin.CoinSource
-	alarmManager       *alarm.AlarmManager
+	timer           *timer.PeriodicTimer
+	settingsStorage settings.SettingsStorage
+	coinSource      coin.CoinSource
+	alarmManager    *alarm.AlarmManager
 
 	coinsAndAlarms  chan []CoinAndAlarm
 	errors          chan error
@@ -20,15 +20,15 @@ type Application struct {
 
 func NewApplication(
 	timer *timer.PeriodicTimer,
-	settingsRepository *settings.Repository,
+	settingsStorage settings.SettingsStorage,
 	coinSource coin.CoinSource,
 	alarmManager *alarm.AlarmManager,
 ) *Application {
 	app := Application{
-		timer:              timer,
-		settingsRepository: settingsRepository,
-		coinSource:         coinSource,
-		alarmManager:       alarmManager,
+		timer:           timer,
+		settingsStorage: settingsStorage,
+		coinSource:      coinSource,
+		alarmManager:    alarmManager,
 
 		coinsAndAlarms:  make(chan []CoinAndAlarm),
 		errors:          make(chan error, 1),
@@ -43,15 +43,54 @@ func NewApplication(
 		}
 	}()
 
-	settings, err := settingsRepository.Load()
+	app.timer.SetInterval(app.loadSettings().Interval)
+
+	return &app
+}
+
+func (app *Application) CoinsAndAlarms() <-chan []CoinAndAlarm {
+	return app.coinsAndAlarms
+}
+
+func (app *Application) Errors() <-chan error {
+	return app.errors
+}
+
+func (app *Application) TriggeredAlarms() <-chan alarm.TriggeredAlarm {
+	return app.triggeredAlarms
+}
+
+func (app *Application) Settings() settings.Settings {
+	return app.loadSettings()
+}
+
+func (app *Application) SetSettings(settings settings.Settings) error {
+	err := app.settingsStorage.Save(settings)
+
+	if err == nil {
+		app.timer.SetInterval(settings.Interval)
+	}
+
+	// Return error or notify channel of error?
+	return err
+}
+
+func (app *Application) Destroy() {
+	close(app.coinsAndAlarms)
+	close(app.errors)
+	close(app.triggeredAlarms)
+
+	app.timer.Destroy()
+}
+
+func (app *Application) loadSettings() settings.Settings {
+	sett, err := app.settingsStorage.Load()
 
 	if err != nil {
 		app.errors <- err
 	}
 
-	app.timer.SetInterval(settings.Interval)
-
-	return &app
+	return sett
 }
 
 func (app *Application) fetchCoins() {
@@ -68,40 +107,4 @@ func (app *Application) fetchCoins() {
 	for _, alarm := range app.alarmManager.CheckAlarms(coins) {
 		app.triggeredAlarms <- alarm
 	}
-}
-
-func (app *Application) CoinsAndAlarms() <-chan []CoinAndAlarm {
-	return app.coinsAndAlarms
-}
-
-func (app *Application) Errors() <-chan error {
-	return app.errors
-}
-
-func (app *Application) TriggeredAlarms() <-chan alarm.TriggeredAlarm {
-	return app.triggeredAlarms
-}
-
-func (app *Application) Settings() settings.Settings {
-	settings, _ := app.settingsRepository.Load() // TODO: Error handling?
-	return settings
-}
-
-func (app *Application) SetSettings(settings settings.Settings) error {
-	err := app.settingsRepository.Save(settings)
-
-	if err == nil {
-		app.timer.SetInterval(settings.Interval)
-	}
-
-	// Return error or notify channel of error?
-	return err
-}
-
-func (app *Application) Destroy() {
-	close(app.coinsAndAlarms)
-	close(app.errors)
-	close(app.triggeredAlarms)
-
-	app.timer.Destroy()
 }

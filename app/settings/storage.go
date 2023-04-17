@@ -6,32 +6,28 @@ import (
 	"time"
 )
 
-type jsonFileFormat struct {
+type fileFormat struct {
 	Interval         int64
 	ShowWindowOnOpen bool
 }
 
-type jsonFileStorage struct {
-	path string
+type fileStorage string
+
+func NewSettingsStorage(path string) SettingsStorage {
+	return fileStorage(path)
 }
 
-func NewJsonFileStorage(path string) SettingsStorage {
-	return jsonFileStorage{
-		path: path,
-	}
-}
-
-func (storage jsonFileStorage) Save(pref Settings) error {
+func (storage fileStorage) Save(pref Settings) error {
 	var file *os.File
 	var e error
 
-	if file, e = os.Create(storage.path); e != nil {
+	if file, e = os.Create(string(storage)); e != nil {
 		return e
 	}
 
 	defer file.Close()
 
-	decoded := jsonFileFormat{
+	decoded := fileFormat{
 		Interval:         int64(pref.Interval),
 		ShowWindowOnOpen: pref.ShowWindowOnOpen,
 	}
@@ -45,22 +41,22 @@ func (storage jsonFileStorage) Save(pref Settings) error {
 	return nil
 }
 
-func (storage jsonFileStorage) Load() (Settings, error) {
+func (storage fileStorage) Load() (Settings, error) {
 	var file *os.File
 	var e error
 
-	if file, e = os.Open(storage.path); e != nil {
-		return Settings{}, e
+	if file, e = os.Open(string(storage)); e != nil {
+		return newDefaultSettings(), e
 	}
 
 	defer file.Close()
 
-	var decoded jsonFileFormat
+	var decoded fileFormat
 
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return Settings{}, e
+		return newDefaultSettings(), e
 	}
 
 	return Settings{
