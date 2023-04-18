@@ -8,10 +8,10 @@ import "github.com/dantas/gocoindesktop/app/coin"
 
 type AlarmManager struct {
 	storage AlarmStorage
-	entries map[string]entry
+	entries map[string]alarmAndStatus
 }
 
-type entry struct {
+type alarmAndStatus struct {
 	alarm   Alarm
 	inRange bool
 }
@@ -19,7 +19,7 @@ type entry struct {
 func NewAlarmManager(storage AlarmStorage) *AlarmManager {
 	return &AlarmManager{
 		storage: storage,
-		entries: make(map[string]entry),
+		entries: make(map[string]alarmAndStatus),
 	}
 }
 
@@ -30,10 +30,10 @@ func (manager *AlarmManager) Load() error {
 		return err
 	}
 
-	manager.entries = make(map[string]entry)
+	manager.entries = make(map[string]alarmAndStatus)
 
 	for _, a := range alarms {
-		manager.entries[a.Name] = entry{
+		manager.entries[a.Name] = alarmAndStatus{
 			alarm: a,
 		}
 	}
@@ -62,7 +62,7 @@ func (manager *AlarmManager) save() error {
 }
 
 func (manager *AlarmManager) Add(alarm Alarm) error {
-	manager.entries[alarm.Name] = entry{
+	manager.entries[alarm.Name] = alarmAndStatus{
 		alarm: alarm,
 	}
 
