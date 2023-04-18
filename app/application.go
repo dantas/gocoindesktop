@@ -45,6 +45,10 @@ func NewApplication(
 
 	app.timer.SetInterval(app.loadSettings().Interval)
 
+	if err := app.alarmManager.Load(); err != nil {
+		app.errors <- err
+	}
+
 	return &app
 }
 
