@@ -42,7 +42,7 @@ func AlarmLeaveRangeMessage(alarm alarm.TriggeredAlarm) string {
 
 // Settings tab
 const SettingsUpdateInterval = "Update interval"
-const SettingsShowWindowOnOpen = "Show window on opening app"
+const SettingsShowWindowOnOpen = "Show window when opening app"
 const SettingsShowWindowOnOpenOption = "Yes"
 const SettingsSubmitButton = "Update"
 const Settings1Min = "1 min"
