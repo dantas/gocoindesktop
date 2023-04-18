@@ -1,6 +1,7 @@
 package presenter
 
 import (
+	"github.com/dantas/gocoindesktop/app"
 	"github.com/dantas/gocoindesktop/app/alarm"
 	"github.com/dantas/gocoindesktop/app/settings"
 )
@@ -12,22 +13,15 @@ const (
 	PRESENTER_SHOW_SETTINGS Event = iota
 )
 
-type Entry struct {
-	Name       string
-	Price      float64
-	IsChecked  bool
-	LowerBound float64
-	UpperBound float64
-}
-
 type Presenter interface {
 	OnSystrayClickCoins()
 	OnSystrayClickSettings()
 	OnSystrayClickQuit()
+	SetAlarm(alarm.Alarm)
 	Events() <-chan Event
 	Settings() settings.Settings
 	SetSettings(settings settings.Settings)
 	Errors() <-chan error
-	Entries() <-chan []Entry
+	CoinAndAlarm() <-chan []app.CoinAndAlarm
 	TriggeredAlarms() <-chan alarm.TriggeredAlarm
 }

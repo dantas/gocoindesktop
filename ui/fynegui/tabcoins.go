@@ -6,14 +6,10 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
+	"github.com/dantas/gocoindesktop/app"
 	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/dantas/gocoindesktop/ui/presenter"
 )
-
-// type tableState struct {
-// 	coins  []coin.Coin
-// 	alarms map[string]alarm.Alarm
-// }
 
 type rowViews struct {
 	label      *widget.Label
@@ -75,60 +71,58 @@ func drawColumnName(i widget.TableCellID, rowViews *rowViews) bool {
 	return true
 }
 
-func scheduleSynchronization() {
-
-}
-
-func drawContent(i widget.TableCellID, rowViews *rowViews, entry presenter.Entry) {
+func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm app.CoinAndAlarm) {
 	switch i.Col {
 	case 0:
-		rowViews.label.SetText(entry.Name)
+		rowViews.label.SetText(coinAndAlarm.Coin.Name)
 		rowViews.label.Show()
 	case 1:
-		rowViews.label.SetText(localization.FormatPrice(entry.Price))
+		rowViews.label.SetText(localization.FormatPrice(coinAndAlarm.Coin.Price))
 		rowViews.label.Show()
 	case 2:
-		// rowViews.check.OnChanged = func(b bool) {
-		// 	scheduleSynchronization()
-		// }
-		rowViews.check.SetChecked(entry.IsChecked)
+		var checked bool
+
+		if coinAndAlarm.Alarm != nil {
+			checked = coinAndAlarm.Alarm.IsEnabled
+		}
+
+		rowViews.check.SetChecked(checked)
 		rowViews.check.Show()
 	case 3:
-		if entry.LowerBound != 0 {
-			rowViews.lowerBound.SetText(fmt.Sprint(entry.LowerBound))
+		var text string
+
+		if coinAndAlarm.Alarm != nil {
+			text = fmt.Sprint(coinAndAlarm.Alarm.LowerBound)
 		}
 
+		rowViews.lowerBound.SetText(text)
 		rowViews.lowerBound.Show()
 	case 4:
-		if entry.UpperBound != 0 {
-			rowViews.upperBound.SetText(fmt.Sprint(entry.UpperBound))
+		var text string
+
+		if coinAndAlarm.Alarm != nil {
+			text = fmt.Sprint(coinAndAlarm.Alarm.UpperBound)
 		}
 
+		rowViews.upperBound.SetText(text)
 		rowViews.upperBound.Show()
 	}
 }
 
 func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table {
-
-	// update precisa atualizar coins, sem perder alarmes antigos
-	// pegar alarmes salvos e carregar aqui
-
 	var table *widget.Table
 
-	// TODO: Save state in presenter, add timer to reset save timeout
-	// Diferenciar entre UI state e alarm state
-
-	var entries []presenter.Entry
+	var localCoinAndAlarm []app.CoinAndAlarm
 
 	go func() {
-		for entries = range pres.Entries() {
+		for localCoinAndAlarm = range pres.CoinAndAlarm() {
 			table.Refresh()
 		}
 	}()
 
 	table = widget.NewTable(
 		func() (int, int) {
-			return len(entries) + 1, COLUMN_SIZE
+			return len(localCoinAndAlarm) + 1, COLUMN_SIZE
 		},
 		createRowViews,
 		func(i widget.TableCellID, o fyne.CanvasObject) {
@@ -138,7 +132,7 @@ func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table 
 				return
 			}
 
-			drawContent(i, rowViews, entries[i.Row-1])
+			drawContent(i, rowViews, localCoinAndAlarm[i.Row-1])
 
 			// 	case 2:
 			// 		_, exist := alarms[coin.Name]

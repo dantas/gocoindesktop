@@ -7,27 +7,21 @@ import (
 )
 
 type fynePresenter struct {
-	app     *app.Application
-	events  chan Event
-	entries chan []Entry
+	app    *app.Application
+	events chan Event
 }
 
 func NewPresenter(app *app.Application) Presenter {
 	presenter := fynePresenter{
-		app:     app,
-		events:  make(chan Event),
-		entries: make(chan []Entry),
+		app:    app,
+		events: make(chan Event),
 	}
 
-	go func() {
-		for sliceCoinAlarm := range app.CoinsAndAlarms() {
-			presenter.entries <- toSlicePresenterEntry(sliceCoinAlarm)
-		}
-
-		close(presenter.entries)
-	}()
-
 	return &presenter
+}
+
+func (p *fynePresenter) SetAlarm(newAlarm alarm.Alarm) {
+	p.app.SetAlarm(newAlarm)
 }
 
 func (p *fynePresenter) OnSystrayClickCoins() {
@@ -59,31 +53,10 @@ func (p *fynePresenter) Errors() <-chan error {
 	return p.app.Errors()
 }
 
-func (p *fynePresenter) Entries() <-chan []Entry {
-	return p.entries
+func (p *fynePresenter) CoinAndAlarm() <-chan []app.CoinAndAlarm {
+	return p.app.CoinsAndAlarms()
 }
 
 func (p *fynePresenter) TriggeredAlarms() <-chan alarm.TriggeredAlarm {
 	return p.app.TriggeredAlarms()
-}
-
-func toSlicePresenterEntry(sliceCoinAlarm []app.CoinAndAlarm) []Entry {
-	entries := make([]Entry, 0, len(sliceCoinAlarm))
-
-	for _, coinAlarm := range sliceCoinAlarm {
-		entry := Entry{
-			Name:  coinAlarm.Coin.Name,
-			Price: coinAlarm.Coin.Price,
-		}
-
-		if coinAlarm.Alarm != nil {
-			entry.IsChecked = coinAlarm.Alarm.IsEnabled
-			entry.LowerBound = coinAlarm.Alarm.LowerBound
-			entry.UpperBound = coinAlarm.Alarm.UpperBound
-		}
-
-		entries = append(entries, entry)
-	}
-
-	return entries
 }
