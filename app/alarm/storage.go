@@ -16,8 +16,16 @@ func NewAlarmStorage(path string) AlarmStorage {
 
 type fileStorage string
 
+// Placeholder for future modifications when fileAlarm diverges from Alarm
+type fileAlarm struct {
+	Name       string
+	LowerBound float64
+	UpperBound float64
+	IsEnabled  bool
+}
+
 type fileFormat struct {
-	Alarms []Alarm
+	Alarms []fileAlarm
 }
 
 func (storage fileStorage) Save(alarms []Alarm) error {
@@ -30,8 +38,14 @@ func (storage fileStorage) Save(alarms []Alarm) error {
 
 	defer file.Close()
 
+	fileAlarms := make([]fileAlarm, 0, len(alarms))
+
+	for _, alarm := range alarms {
+		fileAlarms = append(fileAlarms, fileAlarm(alarm))
+	}
+
 	decoded := fileFormat{
-		Alarms: alarms,
+		Alarms: fileAlarms,
 	}
 
 	encoder := json.NewEncoder(file)
@@ -61,5 +75,11 @@ func (storage fileStorage) Load() ([]Alarm, error) {
 		return nil, e
 	}
 
-	return decoded.Alarms, nil
+	alarms := make([]Alarm, 0, len(decoded.Alarms))
+
+	for _, fileAlarm := range decoded.Alarms {
+		alarms = append(alarms, Alarm(fileAlarm))
+	}
+
+	return alarms, nil
 }
