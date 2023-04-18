@@ -17,6 +17,6 @@ func main() {
 func newApplicationCompositionRoot() *app.Application {
 	settingsStorage := settings.NewSettingsStorage("settings.json")
 	alarmStorage := alarm.NewAlarmStorage("alarm.json")
-	alarmManager := alarm.NewAlarmManager(&alarmStorage)
+	alarmManager := alarm.NewAlarmManager(alarmStorage)
 	return app.NewApplication(timer.NewPeriodicTimer(), settingsStorage, coin.CoinMarketCapSource, alarmManager)
 }
