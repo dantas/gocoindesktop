@@ -16,16 +16,15 @@ func NewAlarmStorage(path string) AlarmStorage {
 
 type fileStorage string
 
-// Placeholder for future modifications when fileAlarm diverges from Alarm
-type fileAlarm struct {
-	Name       string
-	LowerBound float64
-	UpperBound float64
-	IsEnabled  bool
+type fileFormat struct {
+	Alarms []fileAlarm `json:"alarms"`
 }
 
-type fileFormat struct {
-	Alarms []fileAlarm
+type fileAlarm struct {
+	Name       string  `json:"name"`
+	LowerBound float64 `json:"lowerBound"`
+	UpperBound float64 `json:"upperBound"`
+	IsEnabled  bool    `json:"isEnabled"`
 }
 
 func (storage fileStorage) Save(alarms []Alarm) error {

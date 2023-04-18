@@ -7,8 +7,8 @@ import (
 )
 
 type fileFormat struct {
-	Interval         int64
-	ShowWindowOnOpen bool
+	Interval         int64 `json:"interval"`
+	ShowWindowOnOpen bool  `json:"showWindowOnOpen"`
 }
 
 type fileStorage string
