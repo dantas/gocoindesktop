@@ -11,30 +11,26 @@ type AlarmStorage interface {
 }
 
 func NewAlarmStorage(path string) AlarmStorage {
-	return &JsonFileAlarmStorage{
-		path: path,
-	}
+	return fileStorage(path)
 }
 
-type JsonFileAlarmStorage struct {
-	path string
-}
+type fileStorage string
 
-type jsonFileFormat struct {
+type fileFormat struct {
 	Alarms []Alarm
 }
 
-func (storage *JsonFileAlarmStorage) Save(alarms []Alarm) error {
+func (storage fileStorage) Save(alarms []Alarm) error {
 	var file *os.File
 	var e error
 
-	if file, e = os.Create(storage.path); e != nil {
+	if file, e = os.Create(string(storage)); e != nil {
 		return e
 	}
 
 	defer file.Close()
 
-	decoded := jsonFileFormat{
+	decoded := fileFormat{
 		Alarms: alarms,
 	}
 
@@ -47,17 +43,17 @@ func (storage *JsonFileAlarmStorage) Save(alarms []Alarm) error {
 	return nil
 }
 
-func (storage *JsonFileAlarmStorage) Load() ([]Alarm, error) {
+func (storage fileStorage) Load() ([]Alarm, error) {
 	var file *os.File
 	var e error
 
-	if file, e = os.Open(storage.path); e != nil {
+	if file, e = os.Open(string(storage)); e != nil {
 		return nil, e
 	}
 
 	defer file.Close()
 
-	var decoded jsonFileFormat
+	var decoded fileFormat
 
 	decoder := json.NewDecoder(file)
 
