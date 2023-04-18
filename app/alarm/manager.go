@@ -3,6 +3,9 @@ package alarm
 import "github.com/dantas/gocoindesktop/app/coin"
 
 // TODO: Find a better name than manager
+// TODO: Need a way to extract alarms and use them
+// TODO: Test manager
+
 type AlarmManager struct {
 	storage AlarmStorage
 	entries map[string]entry
@@ -13,9 +16,9 @@ type entry struct {
 	inRange bool
 }
 
-func NewAlarmManager(storage *AlarmStorage) *AlarmManager {
+func NewAlarmManager(storage AlarmStorage) *AlarmManager {
 	return &AlarmManager{
-		storage: *storage,
+		storage: storage,
 		entries: make(map[string]entry),
 	}
 }
@@ -36,6 +39,16 @@ func (manager *AlarmManager) Load() error {
 	}
 
 	return nil
+}
+
+func (manager *AlarmManager) Alarms() []Alarm {
+	alarms := make([]Alarm, 0, len(manager.entries))
+
+	for _, entry := range manager.entries {
+		alarms = append(alarms, entry.alarm)
+	}
+
+	return alarms
 }
 
 func (manager *AlarmManager) save() error {
@@ -69,6 +82,10 @@ func (manager *AlarmManager) CheckAlarms(coins []coin.Coin) []TriggeredAlarm {
 		entry, exists := manager.entries[coin.Name]
 
 		if !exists {
+			continue
+		}
+
+		if !entry.alarm.IsEnabled {
 			continue
 		}
 

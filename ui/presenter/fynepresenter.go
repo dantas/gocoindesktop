@@ -77,7 +77,7 @@ func toSlicePresenterEntry(sliceCoinAlarm []app.CoinAndAlarm) []Entry {
 		}
 
 		if coinAlarm.Alarm != nil {
-			entry.IsChecked = true
+			entry.IsChecked = coinAlarm.Alarm.IsEnabled
 			entry.LowerBound = coinAlarm.Alarm.LowerBound
 			entry.UpperBound = coinAlarm.Alarm.UpperBound
 		}

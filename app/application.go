@@ -100,8 +100,7 @@ func (app *Application) fetchCoins() {
 		return
 	}
 
-	// TODO: Load alarms from alarm manager
-	app.coinsAndAlarms <- merge(coins, nil)
+	app.coinsAndAlarms <- merge(coins, app.alarmManager.Alarms())
 
 	for _, alarm := range app.alarmManager.CheckAlarms(coins) {
 		app.triggeredAlarms <- alarm

@@ -6,6 +6,7 @@ type Alarm struct {
 	Name       string
 	LowerBound float64
 	UpperBound float64
+	IsEnabled  bool
 }
 
 type TriggeredAlarm struct {
