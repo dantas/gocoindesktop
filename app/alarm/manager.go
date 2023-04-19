@@ -51,26 +51,11 @@ func (manager *AlarmManager) Alarms() []Alarm {
 	return alarms
 }
 
-func (manager *AlarmManager) save() error {
-	alarms := make([]Alarm, 0, len(manager.entries))
-
-	for _, v := range manager.entries {
-		alarms = append(alarms, v.alarm)
-	}
-
-	return manager.storage.Save(alarms)
-}
-
-func (manager *AlarmManager) Add(alarm Alarm) error {
+func (manager *AlarmManager) Set(alarm Alarm) error {
 	manager.entries[alarm.Name] = alarmAndStatus{
-		alarm: alarm,
+		alarm:   alarm,
+		inRange: manager.entries[alarm.Name].inRange,
 	}
-
-	return manager.save()
-}
-
-func (manager *AlarmManager) Remove(alarm Alarm) error {
-	delete(manager.entries, alarm.Name)
 
 	return manager.save()
 }
@@ -116,4 +101,14 @@ func (manager *AlarmManager) CheckAlarms(coins []coin.Coin) []TriggeredAlarm {
 	}
 
 	return triggered
+}
+
+func (manager *AlarmManager) save() error {
+	alarms := make([]Alarm, 0, len(manager.entries))
+
+	for _, v := range manager.entries {
+		alarms = append(alarms, v.alarm)
+	}
+
+	return manager.storage.Save(alarms)
 }

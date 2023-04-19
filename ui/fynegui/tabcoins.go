@@ -2,11 +2,13 @@ package fynegui
 
 import (
 	"fmt"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/app"
+	"github.com/dantas/gocoindesktop/app/alarm"
 	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/dantas/gocoindesktop/ui/presenter"
 )
@@ -71,7 +73,7 @@ func drawColumnName(i widget.TableCellID, rowViews *rowViews) bool {
 	return true
 }
 
-func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm app.CoinAndAlarm) {
+func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm *app.CoinAndAlarm, setAlarm func(alarm.Alarm)) {
 	switch i.Col {
 	case 0:
 		rowViews.label.SetText(coinAndAlarm.Coin.Name)
@@ -88,6 +90,18 @@ func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm app.Coin
 
 		rowViews.check.SetChecked(checked)
 		rowViews.check.Show()
+
+		rowViews.check.OnChanged = func(c bool) {
+			if coinAndAlarm.Alarm == nil {
+				coinAndAlarm.Alarm = &alarm.Alarm{
+					Name: coinAndAlarm.Coin.Name,
+				}
+			}
+
+			coinAndAlarm.Alarm.IsEnabled = c
+
+			setAlarm(*coinAndAlarm.Alarm)
+		}
 	case 3:
 		var text string
 
@@ -97,6 +111,25 @@ func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm app.Coin
 
 		rowViews.lowerBound.SetText(text)
 		rowViews.lowerBound.Show()
+
+		rowViews.lowerBound.OnChanged = func(s string) {
+			if coinAndAlarm.Alarm == nil {
+				coinAndAlarm.Alarm = &alarm.Alarm{
+					Name: coinAndAlarm.Coin.Name,
+				}
+			}
+
+			var number float64
+			var err error
+
+			number, err = strconv.ParseFloat(rowViews.lowerBound.Text, 64)
+
+			if err == nil {
+				coinAndAlarm.Alarm.LowerBound = number
+			}
+
+			setAlarm(*coinAndAlarm.Alarm)
+		}
 	case 4:
 		var text string
 
@@ -106,12 +139,32 @@ func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm app.Coin
 
 		rowViews.upperBound.SetText(text)
 		rowViews.upperBound.Show()
+
+		rowViews.upperBound.OnChanged = func(s string) {
+			if coinAndAlarm.Alarm == nil {
+				coinAndAlarm.Alarm = &alarm.Alarm{
+					Name: coinAndAlarm.Coin.Name,
+				}
+			}
+
+			var number float64
+			var err error
+
+			number, err = strconv.ParseFloat(rowViews.upperBound.Text, 64)
+
+			if err == nil {
+				coinAndAlarm.Alarm.UpperBound = number
+			}
+
+			setAlarm(*coinAndAlarm.Alarm)
+		}
 	}
 }
 
 func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table {
 	var table *widget.Table
 
+	// Do we need to access this local state through mutex?
 	var localCoinAndAlarm []app.CoinAndAlarm
 
 	go func() {
@@ -132,51 +185,7 @@ func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table 
 				return
 			}
 
-			drawContent(i, rowViews, localCoinAndAlarm[i.Row-1])
-
-			// 	case 2:
-			// 		_, exist := alarms[coin.Name]
-
-			// 		// Add deboucing
-			// 		readNumbersUpdateAlarm := func(row int) {
-			// 			alarm, exists := alarms[coin.Name]
-
-			// 			if !exists {
-			// 				return
-			// 			}
-
-			// 			var number float64
-			// 			var err error
-
-			// 			number, err = strconv.ParseFloat(lowerBound.Text, 64)
-
-			// 			if err != nil {
-			// 				return
-			// 			} else {
-			// 				alarm.LowerBound = number
-			// 			}
-
-			// 			number, err = strconv.ParseFloat(upperBound.Text, 64)
-
-			// 			if err != nil {
-			// 				return
-			// 			} else {
-			// 				alarm.UpperBound = number
-			// 			}
-			// 		}
-
-			// 		check.OnChanged = func(isChecked bool) {
-			// 			if !isChecked {
-			// 				delete(alarms, coin.Name)
-			// 				return
-			// 			}
-
-			// 			alarms[coin.Name] = alarm.Alarm{
-			// 				Name: coin.Name,
-			// 			}
-
-			// 			readNumbersUpdateAlarm(i.Row)
-			// 		}
+			drawContent(i, rowViews, &localCoinAndAlarm[i.Row-1], pres.SetAlarm)
 		},
 	)
 

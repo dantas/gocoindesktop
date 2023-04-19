@@ -78,6 +78,14 @@ func (app *Application) SetSettings(settings settings.Settings) {
 	}
 }
 
+func (app *Application) SetAlarm(newAlarm alarm.Alarm) {
+	err := app.alarmManager.Set(newAlarm)
+
+	if err != nil {
+		app.errors <- err
+	}
+}
+
 func (app *Application) Destroy() {
 	close(app.coinsAndAlarms)
 	close(app.errors)
