@@ -42,3 +42,13 @@ func (e *numericalEntry) TypedShortcut(shortcut fyne.Shortcut) {
 func (e *numericalEntry) Keyboard() mobile.KeyboardType {
 	return mobile.NumberKeyboard
 }
+
+func (e *numericalEntry) OnTextChangedAsFloat64(callback func(float64)) {
+	e.OnChanged = func(s string) {
+		number, err := strconv.ParseFloat(e.Text, 64)
+
+		if err == nil {
+			callback(number)
+		}
+	}
+}
