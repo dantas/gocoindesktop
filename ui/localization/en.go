@@ -5,6 +5,7 @@ package localization
 import (
 	"fmt"
 
+	"fyne.io/fyne/v2"
 	"github.com/dantas/gocoindesktop/app/alarm"
 )
 
@@ -26,6 +27,17 @@ const ColumnPrice = "Price"
 const ColumnAlarm = "Enable alarm"
 const ColumnLowerBound = "Lower bound"
 const ColumnUpperBound = "Upper bound"
+
+// Sizes
+func WindowSize() fyne.Size {
+	return fyne.NewSize(600, 300)
+}
+
+const ColumnWidthCoin = 150
+const ColumnWidthPrice = 100
+const ColumnWidthAlarm = 100
+const ColumnWidthLowerBound = 100
+const ColumnWidthUpperBound = 100
 
 // Alarm notification
 func AlarmTitle(alarm alarm.TriggeredAlarm) string {

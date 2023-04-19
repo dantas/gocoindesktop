@@ -18,7 +18,7 @@ func createWindow(app fyne.App, pres presenter.Presenter) fyne.Window {
 
 	window.SetContent(appTabs)
 
-	window.Resize(fyne.NewSize(600, 300))
+	window.Resize(localization.WindowSize())
 	window.SetCloseIntercept(window.Hide)
 	window.CenterOnScreen()
 

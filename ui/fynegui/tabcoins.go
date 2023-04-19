@@ -189,12 +189,11 @@ func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table 
 		},
 	)
 
-	// TODO: Move size to another place
-	table.SetColumnWidth(0, 150)
-	table.SetColumnWidth(1, 100)
-	table.SetColumnWidth(2, 100)
-	table.SetColumnWidth(3, 100)
-	table.SetColumnWidth(4, 100)
+	table.SetColumnWidth(0, localization.ColumnWidthCoin)
+	table.SetColumnWidth(1, localization.ColumnWidthPrice)
+	table.SetColumnWidth(2, localization.ColumnWidthAlarm)
+	table.SetColumnWidth(3, localization.ColumnWidthLowerBound)
+	table.SetColumnWidth(4, localization.ColumnWidthUpperBound)
 
 	return table
 }
