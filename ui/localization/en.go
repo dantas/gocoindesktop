@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
-	"github.com/dantas/gocoindesktop/app/alarm"
+	"github.com/dantas/gocoindesktop/domain"
 )
 
 // Systray
@@ -40,15 +40,15 @@ const ColumnWidthLowerBound = 100
 const ColumnWidthUpperBound = 100
 
 // Alarm notification
-func AlarmTitle(alarm alarm.TriggeredAlarm) string {
+func AlarmTitle(alarm domain.TriggeredAlarm) string {
 	return fmt.Sprintf("Alert for %s", alarm.Coin.Name)
 }
 
-func AlarmEnterRangeMessage(alarm alarm.TriggeredAlarm) string {
+func AlarmEnterRangeMessage(alarm domain.TriggeredAlarm) string {
 	return fmt.Sprintf("Coin %s in range, price: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
 }
 
-func AlarmLeaveRangeMessage(alarm alarm.TriggeredAlarm) string {
+func AlarmLeaveRangeMessage(alarm domain.TriggeredAlarm) string {
 	return fmt.Sprintf("Coin %s out of range, price: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
 }
 

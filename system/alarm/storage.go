@@ -3,14 +3,11 @@ package alarm
 import (
 	"encoding/json"
 	"os"
+
+	"github.com/dantas/gocoindesktop/domain"
 )
 
-type AlarmStorage interface {
-	Save(alarms []Alarm) error
-	Load() ([]Alarm, error)
-}
-
-func NewAlarmStorage(path string) AlarmStorage {
+func NewAlarmStorage(path string) domain.AlarmStorage {
 	return fileStorage(path)
 }
 
@@ -27,7 +24,7 @@ type fileAlarm struct {
 	IsEnabled  bool    `json:"isEnabled"`
 }
 
-func (storage fileStorage) Save(alarms []Alarm) error {
+func (storage fileStorage) Save(alarms []domain.Alarm) error {
 	var file *os.File
 	var e error
 
@@ -56,7 +53,7 @@ func (storage fileStorage) Save(alarms []Alarm) error {
 	return nil
 }
 
-func (storage fileStorage) Load() ([]Alarm, error) {
+func (storage fileStorage) Load() ([]domain.Alarm, error) {
 	var file *os.File
 	var e error
 
@@ -74,10 +71,10 @@ func (storage fileStorage) Load() ([]Alarm, error) {
 		return nil, e
 	}
 
-	alarms := make([]Alarm, 0, len(decoded.Alarms))
+	alarms := make([]domain.Alarm, 0, len(decoded.Alarms))
 
 	for _, fileAlarm := range decoded.Alarms {
-		alarms = append(alarms, Alarm(fileAlarm))
+		alarms = append(alarms, domain.Alarm(fileAlarm))
 	}
 
 	return alarms, nil

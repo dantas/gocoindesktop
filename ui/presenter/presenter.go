@@ -1,10 +1,6 @@
 package presenter
 
-import (
-	"github.com/dantas/gocoindesktop/app"
-	"github.com/dantas/gocoindesktop/app/alarm"
-	"github.com/dantas/gocoindesktop/app/settings"
-)
+import "github.com/dantas/gocoindesktop/domain"
 
 type Event int
 
@@ -17,11 +13,11 @@ type Presenter interface {
 	OnSystrayClickCoins()
 	OnSystrayClickSettings()
 	OnSystrayClickQuit()
-	SetAlarm(alarm.Alarm)
+	SetAlarm(domain.Alarm)
 	Events() <-chan Event
-	Settings() settings.Settings
-	SetSettings(settings settings.Settings)
+	Settings() domain.Settings
+	SetSettings(settings domain.Settings)
 	Errors() <-chan error
-	CoinAndAlarm() <-chan []app.CoinAndAlarm
-	TriggeredAlarms() <-chan alarm.TriggeredAlarm
+	CoinAndAlarm() <-chan []domain.CoinAndAlarm
+	TriggeredAlarms() <-chan domain.TriggeredAlarm
 }

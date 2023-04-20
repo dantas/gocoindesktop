@@ -5,12 +5,14 @@ import (
 	"path"
 	"testing"
 	"time"
+
+	"github.com/dantas/gocoindesktop/domain"
 )
 
 func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	storage := newStorage(t)
 
-	settings := Settings{
+	settings := domain.Settings{
 		Interval:         3 * time.Hour,
 		ShowWindowOnOpen: true,
 	}
@@ -35,12 +37,12 @@ func TestSettingsFileStorageReturnsDefaultSettingsOnError(t *testing.T) {
 		t.Error("Expected error, but found nothing")
 	}
 
-	if settings != newDefaultSettings() {
+	if settings != domain.NewDefaultSettings() {
 		t.Errorf("Expected default settings, but found %v", settings)
 	}
 }
 
-func newStorage(t *testing.T) SettingsStorage {
+func newStorage(t *testing.T) domain.SettingsStorage {
 	location := path.Join(os.TempDir(), "settings.json")
 
 	if e := os.Remove(location); e != nil && !os.IsNotExist(e) {

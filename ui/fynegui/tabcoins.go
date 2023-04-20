@@ -6,8 +6,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	"github.com/dantas/gocoindesktop/app"
-	"github.com/dantas/gocoindesktop/app/alarm"
+	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/dantas/gocoindesktop/ui/presenter"
 )
@@ -18,7 +17,7 @@ func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table 
 	var table *widget.Table
 
 	// Do we need to access this local state through mutex?
-	var localCoinAndAlarm []app.CoinAndAlarm
+	var localCoinAndAlarm []domain.CoinAndAlarm
 
 	go func() {
 		for localCoinAndAlarm = range pres.CoinAndAlarm() {
@@ -109,7 +108,7 @@ func drawColumnName(i widget.TableCellID, rowViews *rowViews) bool {
 	return true
 }
 
-func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm *app.CoinAndAlarm, setAlarm func(alarm.Alarm)) {
+func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm *domain.CoinAndAlarm, setAlarm func(domain.Alarm)) {
 	switch i.Col {
 	case 0:
 		rowViews.label.SetText(coinAndAlarm.Coin.Name)
@@ -165,9 +164,9 @@ func drawContent(i widget.TableCellID, rowViews *rowViews, coinAndAlarm *app.Coi
 	}
 }
 
-func initializeAlarm(coinAndAlarm *app.CoinAndAlarm) {
+func initializeAlarm(coinAndAlarm *domain.CoinAndAlarm) {
 	if coinAndAlarm.Alarm == nil {
-		coinAndAlarm.Alarm = &alarm.Alarm{
+		coinAndAlarm.Alarm = &domain.Alarm{
 			Name: coinAndAlarm.Coin.Name,
 		}
 	}

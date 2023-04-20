@@ -1,4 +1,4 @@
-package coin
+package domain
 
 type Coin struct {
 	Name  string

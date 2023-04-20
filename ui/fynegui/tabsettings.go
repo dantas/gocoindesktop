@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2/widget"
-	"github.com/dantas/gocoindesktop/app/settings"
+	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/dantas/gocoindesktop/ui/presenter"
 )
@@ -26,7 +26,7 @@ func createSettingsTab(pres presenter.Presenter) *widget.Form {
 
 	form.SubmitText = localization.SettingsSubmitButton
 	form.OnSubmit = func() {
-		newSettings := settings.Settings{
+		newSettings := domain.Settings{
 			Interval:         intervalOption,
 			ShowWindowOnOpen: windowOnOpen,
 		}

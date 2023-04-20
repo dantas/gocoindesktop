@@ -1,17 +1,13 @@
 package presenter
 
-import (
-	"github.com/dantas/gocoindesktop/app"
-	"github.com/dantas/gocoindesktop/app/alarm"
-	"github.com/dantas/gocoindesktop/app/settings"
-)
+import "github.com/dantas/gocoindesktop/domain"
 
 type fynePresenter struct {
-	app    *app.Application
+	app    *domain.Application
 	events chan Event
 }
 
-func NewPresenter(app *app.Application) Presenter {
+func NewPresenter(app *domain.Application) Presenter {
 	presenter := fynePresenter{
 		app:    app,
 		events: make(chan Event),
@@ -20,7 +16,7 @@ func NewPresenter(app *app.Application) Presenter {
 	return &presenter
 }
 
-func (p *fynePresenter) SetAlarm(newAlarm alarm.Alarm) {
+func (p *fynePresenter) SetAlarm(newAlarm domain.Alarm) {
 	p.app.SetAlarm(newAlarm)
 }
 
@@ -41,11 +37,11 @@ func (p *fynePresenter) Events() <-chan Event {
 	return p.events
 }
 
-func (p *fynePresenter) Settings() settings.Settings {
+func (p *fynePresenter) Settings() domain.Settings {
 	return p.app.Settings()
 }
 
-func (p *fynePresenter) SetSettings(settings settings.Settings) {
+func (p *fynePresenter) SetSettings(settings domain.Settings) {
 	p.app.SetSettings(settings)
 }
 
@@ -53,10 +49,10 @@ func (p *fynePresenter) Errors() <-chan error {
 	return p.app.Errors()
 }
 
-func (p *fynePresenter) CoinAndAlarm() <-chan []app.CoinAndAlarm {
+func (p *fynePresenter) CoinAndAlarm() <-chan []domain.CoinAndAlarm {
 	return p.app.CoinsAndAlarms()
 }
 
-func (p *fynePresenter) TriggeredAlarms() <-chan alarm.TriggeredAlarm {
+func (p *fynePresenter) TriggeredAlarms() <-chan domain.TriggeredAlarm {
 	return p.app.TriggeredAlarms()
 }

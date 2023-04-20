@@ -1,10 +1,25 @@
-package alarm
-
-import "github.com/dantas/gocoindesktop/app/coin"
+package domain
 
 // TODO: Find a better name than manager
-// TODO: Need a way to extract alarms and use them
 // TODO: Test manager
+
+type Alarm struct {
+	Name       string
+	LowerBound float64
+	UpperBound float64
+	IsEnabled  bool
+}
+
+type TriggeredAlarm struct {
+	Alarm   Alarm
+	Coin    Coin
+	InRange bool
+}
+
+type AlarmStorage interface {
+	Save(alarms []Alarm) error
+	Load() ([]Alarm, error)
+}
 
 type AlarmManager struct {
 	storage AlarmStorage
@@ -60,7 +75,7 @@ func (manager *AlarmManager) Set(alarm Alarm) error {
 	return manager.save()
 }
 
-func (manager *AlarmManager) CheckAlarms(coins []coin.Coin) []TriggeredAlarm {
+func (manager *AlarmManager) CheckAlarms(coins []Coin) []TriggeredAlarm {
 	triggered := make([]TriggeredAlarm, 0)
 
 	for _, coin := range coins {

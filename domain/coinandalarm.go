@@ -1,19 +1,14 @@
-package app
-
-import (
-	"github.com/dantas/gocoindesktop/app/alarm"
-	"github.com/dantas/gocoindesktop/app/coin"
-)
+package domain
 
 type CoinAndAlarm struct {
-	Coin  coin.Coin
-	Alarm *alarm.Alarm
+	Coin  Coin
+	Alarm *Alarm
 }
 
-func merge(coins []coin.Coin, alarms []alarm.Alarm) []CoinAndAlarm {
+func merge(coins []Coin, alarms []Alarm) []CoinAndAlarm {
 	result := make([]CoinAndAlarm, 0, len(coins))
 
-	alarmHash := make(map[string]*alarm.Alarm)
+	alarmHash := make(map[string]*Alarm)
 	for _, alarm := range alarms {
 		alarmHash[alarm.Name] = &alarm
 	}

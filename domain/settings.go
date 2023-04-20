@@ -1,4 +1,4 @@
-package settings
+package domain
 
 import (
 	"time"
@@ -14,7 +14,7 @@ type SettingsStorage interface {
 	Load() (Settings, error)
 }
 
-func newDefaultSettings() Settings {
+func NewDefaultSettings() Settings {
 	return Settings{
 		Interval:         5 * time.Minute,
 		ShowWindowOnOpen: true,

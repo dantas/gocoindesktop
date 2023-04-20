@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"time"
+
+	"github.com/dantas/gocoindesktop/domain"
 )
 
 type fileFormat struct {
@@ -13,11 +15,11 @@ type fileFormat struct {
 
 type fileStorage string
 
-func NewSettingsStorage(path string) SettingsStorage {
+func NewSettingsStorage(path string) domain.SettingsStorage {
 	return fileStorage(path)
 }
 
-func (storage fileStorage) Save(pref Settings) error {
+func (storage fileStorage) Save(pref domain.Settings) error {
 	var file *os.File
 	var e error
 
@@ -41,12 +43,12 @@ func (storage fileStorage) Save(pref Settings) error {
 	return nil
 }
 
-func (storage fileStorage) Load() (Settings, error) {
+func (storage fileStorage) Load() (domain.Settings, error) {
 	var file *os.File
 	var e error
 
 	if file, e = os.Open(string(storage)); e != nil {
-		return newDefaultSettings(), e
+		return domain.NewDefaultSettings(), e
 	}
 
 	defer file.Close()
@@ -56,10 +58,10 @@ func (storage fileStorage) Load() (Settings, error) {
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return newDefaultSettings(), e
+		return domain.NewDefaultSettings(), e
 	}
 
-	return Settings{
+	return domain.Settings{
 		Interval:         time.Duration(decoded.Interval),
 		ShowWindowOnOpen: decoded.ShowWindowOnOpen,
 	}, nil

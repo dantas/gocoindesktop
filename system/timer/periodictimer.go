@@ -2,13 +2,9 @@ package timer
 
 import (
 	"time"
-)
 
-type PeriodicTimer interface {
-	Tick() <-chan struct{}
-	SetInterval(interval time.Duration)
-	Destroy()
-}
+	"github.com/dantas/gocoindesktop/domain"
+)
 
 type periodicTimer struct {
 	done   chan any
@@ -17,7 +13,7 @@ type periodicTimer struct {
 }
 
 // Timer only starts after calling SetInterval
-func NewPeriodicTimer() PeriodicTimer {
+func NewPeriodicTimer() domain.PeriodicTimer {
 	p := periodicTimer{
 		done:   make(chan any),
 		tick:   make(chan struct{}),
