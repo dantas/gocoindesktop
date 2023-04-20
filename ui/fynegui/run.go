@@ -22,6 +22,8 @@ func Run(application *app.Application) {
 
 	setupUi(cancelFunc, fyneApp, application)
 
+	application.Start()
+
 	runMainLoops(fyneApp)
 }
 

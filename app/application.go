@@ -24,17 +24,19 @@ func NewApplication(
 	coinSource coin.CoinSource,
 	alarmManager *alarm.AlarmManager,
 ) *Application {
-	app := Application{
+	return &Application{
 		timer:           timer,
 		settingsStorage: settingsStorage,
 		coinSource:      coinSource,
 		alarmManager:    alarmManager,
 
 		coinsAndAlarms:  make(chan []CoinAndAlarm),
-		errors:          make(chan error, 1),
+		errors:          make(chan error),
 		triggeredAlarms: make(chan alarm.TriggeredAlarm),
 	}
+}
 
+func (app *Application) Start() {
 	go func() {
 		app.fetchCoins()
 
@@ -48,8 +50,6 @@ func NewApplication(
 	if err := app.alarmManager.Load(); err != nil {
 		app.errors <- err
 	}
-
-	return &app
 }
 
 func (app *Application) CoinsAndAlarms() <-chan []CoinAndAlarm {
