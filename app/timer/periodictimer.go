@@ -4,15 +4,21 @@ import (
 	"time"
 )
 
-type PeriodicTimer struct {
+type PeriodicTimer interface {
+	Tick() <-chan struct{}
+	SetInterval(interval time.Duration)
+	Destroy()
+}
+
+type periodicTimer struct {
 	done   chan any
 	tick   chan struct{}
 	ticker *time.Ticker
 }
 
 // Timer only starts after calling SetInterval
-func NewPeriodicTimer() *PeriodicTimer {
-	p := PeriodicTimer{
+func NewPeriodicTimer() PeriodicTimer {
+	p := periodicTimer{
 		done:   make(chan any),
 		tick:   make(chan struct{}),
 		ticker: time.NewTicker(1 * time.Minute),
@@ -35,15 +41,15 @@ func NewPeriodicTimer() *PeriodicTimer {
 	return &p
 }
 
-func (p *PeriodicTimer) Tick() <-chan struct{} {
+func (p *periodicTimer) Tick() <-chan struct{} {
 	return p.tick
 }
 
-func (p *PeriodicTimer) SetInterval(interval time.Duration) {
+func (p *periodicTimer) SetInterval(interval time.Duration) {
 	p.ticker.Reset(interval)
 }
 
-func (p *PeriodicTimer) Destroy() {
+func (p *periodicTimer) Destroy() {
 	close(p.done)
 	p.ticker.Stop()
 }

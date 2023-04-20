@@ -13,7 +13,7 @@ func TestPeriodicTimerDestroyStopsTimer(t *testing.T) {
 	counter := 0
 
 	go func() {
-		for range timer.tick {
+		for range timer.Tick() {
 			counter += 1
 		}
 	}()
@@ -35,7 +35,7 @@ func TestPeriodicTimerUsesProvidedInterval(t *testing.T) {
 	counter := 0
 
 	go func() {
-		for range timer.tick {
+		for range timer.Tick() {
 			counter += 1
 		}
 	}()

@@ -8,7 +8,7 @@ import (
 )
 
 type Application struct {
-	timer           *timer.PeriodicTimer
+	timer           timer.PeriodicTimer
 	settingsStorage settings.SettingsStorage
 	coinSource      coin.CoinSource
 	alarmManager    *alarm.AlarmManager
@@ -19,7 +19,7 @@ type Application struct {
 }
 
 func NewApplication(
-	timer *timer.PeriodicTimer,
+	timer timer.PeriodicTimer,
 	settingsStorage settings.SettingsStorage,
 	coinSource coin.CoinSource,
 	alarmManager *alarm.AlarmManager,
