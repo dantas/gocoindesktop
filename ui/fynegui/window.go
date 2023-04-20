@@ -9,31 +9,7 @@ import (
 )
 
 func createWindow(app fyne.App, pres presenter.Presenter) fyne.Window {
-	window := app.NewWindow(localization.AppTitle)
-
-	appTabs := container.NewAppTabs(
-		container.NewTabItem(localization.TabCoins, createCoinsTab(window, pres)),
-		container.NewTabItem(localization.TabSettings, createSettingsTab(pres)),
-	)
-
-	window.SetContent(appTabs)
-
-	window.Resize(localization.WindowSize())
-	window.SetCloseIntercept(window.Hide)
-	window.CenterOnScreen()
-
-	go func() {
-		for event := range pres.Events() {
-			switch event {
-			case presenter.PRESENTER_SHOW_COINS:
-				window.Show()
-				appTabs.SelectIndex(0)
-			case presenter.PRESENTER_SHOW_SETTINGS:
-				window.Show()
-				appTabs.SelectIndex(1)
-			}
-		}
-	}()
+	var window fyne.Window
 
 	go func() {
 		for err := range pres.Errors() {
@@ -57,6 +33,33 @@ func createWindow(app fyne.App, pres presenter.Presenter) fyne.Window {
 			)
 		}
 	}()
+
+	var appTabs *container.AppTabs
+
+	go func() {
+		for event := range pres.Events() {
+			switch event {
+			case presenter.PRESENTER_SHOW_COINS:
+				window.Show()
+				appTabs.SelectIndex(0)
+			case presenter.PRESENTER_SHOW_SETTINGS:
+				window.Show()
+				appTabs.SelectIndex(1)
+			}
+		}
+	}()
+
+	window = app.NewWindow(localization.AppTitle)
+
+	appTabs = container.NewAppTabs(
+		container.NewTabItem(localization.TabCoins, createCoinsTab(window, pres)),
+		container.NewTabItem(localization.TabSettings, createSettingsTab(pres)),
+	)
+
+	window.SetContent(appTabs)
+	window.Resize(localization.WindowSize())
+	window.SetCloseIntercept(window.Hide)
+	window.CenterOnScreen()
 
 	if pres.Settings().ShowWindowOnOpen {
 		window.Show()
