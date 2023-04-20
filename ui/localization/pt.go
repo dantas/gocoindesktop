@@ -53,7 +53,7 @@ func AlarmLeaveRangeMessage(alarm alarm.TriggeredAlarm) string {
 }
 
 // Settings tab
-const SettingsUpdateInterval = "Atualizar intervalo"
+const SettingsUpdateInterval = "Intervalo de atualização"
 const SettingsShowWindowOnOpen = "Mostrar janela na abertura"
 const SettingsShowWindowOnOpenOption = "Sim"
 const SettingsSubmitButton = "Atualizar"
