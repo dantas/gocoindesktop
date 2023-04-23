@@ -9,8 +9,8 @@ func merge(coins []Coin, alarms []Alarm) []CoinAndAlarm {
 	result := make([]CoinAndAlarm, 0, len(coins))
 
 	alarmHash := make(map[string]*Alarm)
-	for _, alarm := range alarms {
-		alarmHash[alarm.Name] = &alarm
+	for i := range alarms {
+		alarmHash[alarms[i].Name] = &alarms[i]
 	}
 
 	for _, coin := range coins {
