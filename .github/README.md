@@ -1,4 +1,4 @@
-# gocoindesktop
+# Go Coin Desktop
 
 This is my first Go project. It is developed and tested in Linux, with no guarantees if it will work on other OSes.
 
