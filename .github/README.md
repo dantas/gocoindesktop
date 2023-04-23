@@ -27,3 +27,5 @@ Ensure the following packages are installed to successfully build the app on ubu
 ![Coin Tab](https://raw.githubusercontent.com/dantas/gocoindesktop/master/.github/readmedia/coins.jpg)
 
 ![Settings Tab](https://raw.githubusercontent.com/dantas/gocoindesktop/master/.github/readmedia/settings.jpg)
+
+![Alert Notification](https://raw.githubusercontent.com/dantas/gocoindesktop/master/.github/readmedia/alert.jpg)
