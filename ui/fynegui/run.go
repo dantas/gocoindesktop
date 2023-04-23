@@ -6,12 +6,13 @@ import (
 	"fyne.io/fyne/v2"
 	fyneApp "fyne.io/fyne/v2/app"
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/dantas/gocoindesktop/ui/localization"
 	"github.com/dantas/gocoindesktop/ui/presenter"
 	"github.com/getlantern/systray"
 )
 
 func Run(application *domain.Application) {
-	fyneApp := fyneApp.NewWithID("gocoindesktop")
+	fyneApp := fyneApp.NewWithID(localization.AppTitle)
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
 
