@@ -21,3 +21,9 @@ Default language is english. Use build tag **pt** for the portuguese language.
 
 Ensure the following packages are installed to successfully build the app on ubuntu:  
     ```sudo apt-get install pkg-config xorg-dev libayatana-appindicator3-dev```
+
+### Screenshots
+
+![Coin Tab](https://raw.githubusercontent.com/dantas/gocoindesktop/master/.github/readmedia/tab.jpg)
+
+![Settings Tab](https://raw.githubusercontent.com/dantas/gocoindesktop/master/.github/readmedia/settings.jpg)
