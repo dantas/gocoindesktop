@@ -40,13 +40,13 @@ func (storage fileStorage) Save(alarms []domain.Alarm) error {
 		fileAlarms = append(fileAlarms, fileAlarm(alarm))
 	}
 
-	decoded := fileFormat{
+	toEncode := fileFormat{
 		Alarms: fileAlarms,
 	}
 
 	encoder := json.NewEncoder(file)
 
-	if e := encoder.Encode(&decoded); e != nil {
+	if e := encoder.Encode(&toEncode); e != nil {
 		return e
 	}
 
