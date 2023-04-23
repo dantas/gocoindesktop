@@ -45,11 +45,11 @@ func AlarmTitle(alarm domain.TriggeredAlarm) string {
 }
 
 func AlarmEnterRangeMessage(alarm domain.TriggeredAlarm) string {
-	return fmt.Sprintf("Moeda %s dentro do intervalo, preço: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
+	return fmt.Sprintf("Moeda dentro do intervalo, preço: %s", FormatPrice(alarm.Coin.Price))
 }
 
 func AlarmLeaveRangeMessage(alarm domain.TriggeredAlarm) string {
-	return fmt.Sprintf("Moeda %s fora do intervalo, preço: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
+	return fmt.Sprintf("Moeda fora do intervalo, preço: %s", FormatPrice(alarm.Coin.Price))
 }
 
 // Settings tab

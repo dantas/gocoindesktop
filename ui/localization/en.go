@@ -41,15 +41,15 @@ const ColumnWidthUpperBound = 100
 
 // Alarm notification
 func AlarmTitle(alarm domain.TriggeredAlarm) string {
-	return fmt.Sprintf("Alert for %s", alarm.Coin.Name)
+	return fmt.Sprintf("%s Alert", alarm.Coin.Name)
 }
 
 func AlarmEnterRangeMessage(alarm domain.TriggeredAlarm) string {
-	return fmt.Sprintf("Coin %s in range, price: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
+	return fmt.Sprintf("Coin in range, price: %s", FormatPrice(alarm.Coin.Price))
 }
 
 func AlarmLeaveRangeMessage(alarm domain.TriggeredAlarm) string {
-	return fmt.Sprintf("Coin %s out of range, price: %s", alarm.Coin.Name, FormatPrice(alarm.Coin.Price))
+	return fmt.Sprintf("Coin out of range, price: %s", FormatPrice(alarm.Coin.Price))
 }
 
 // Settings tab
