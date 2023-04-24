@@ -1,4 +1,4 @@
-package presenter
+package fynegui
 
 import "github.com/dantas/gocoindesktop/domain"
 
@@ -13,6 +13,7 @@ type Presenter interface {
 	OnSystrayClickCoins()
 	OnSystrayClickSettings()
 	OnSystrayClickQuit()
+	Start()
 	SetAlarm(domain.Alarm)
 	Events() <-chan Event
 	Settings() domain.Settings

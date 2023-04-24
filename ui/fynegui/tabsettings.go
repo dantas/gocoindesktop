@@ -6,10 +6,9 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
-	"github.com/dantas/gocoindesktop/ui/presenter"
 )
 
-func createSettingsTab(pres presenter.Presenter) *widget.Form {
+func createSettingsTab(pres Presenter) *widget.Form {
 	intervalOption := pres.Settings().Interval
 	intervalWidget := widget.NewFormItem(
 		localization.SettingsUpdateInterval,

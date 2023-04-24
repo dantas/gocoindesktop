@@ -8,12 +8,11 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
-	"github.com/dantas/gocoindesktop/ui/presenter"
 )
 
 const _COLUMN_SIZE = 5
 
-func createCoinsTab(window fyne.Window, pres presenter.Presenter) *widget.Table {
+func createCoinsTab(window fyne.Window, pres Presenter) *widget.Table {
 	var table *widget.Table
 
 	// Do we need to access this local state through mutex?

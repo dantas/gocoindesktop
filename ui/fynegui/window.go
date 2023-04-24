@@ -5,10 +5,9 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"github.com/dantas/gocoindesktop/ui/localization"
-	"github.com/dantas/gocoindesktop/ui/presenter"
 )
 
-func createWindow(app fyne.App, pres presenter.Presenter) fyne.Window {
+func createWindow(app fyne.App, pres Presenter) fyne.Window {
 	var window fyne.Window
 
 	go func() {
@@ -39,10 +38,10 @@ func createWindow(app fyne.App, pres presenter.Presenter) fyne.Window {
 	go func() {
 		for event := range pres.Events() {
 			switch event {
-			case presenter.PRESENTER_SHOW_COINS:
+			case PRESENTER_SHOW_COINS:
 				window.Show()
 				appTabs.SelectIndex(0)
-			case presenter.PRESENTER_SHOW_SETTINGS:
+			case PRESENTER_SHOW_SETTINGS:
 				window.Show()
 				appTabs.SelectIndex(1)
 			}
