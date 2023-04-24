@@ -6,14 +6,14 @@ import (
 	"github.com/dantas/gocoindesktop/system/coinsource"
 	"github.com/dantas/gocoindesktop/system/settings"
 	"github.com/dantas/gocoindesktop/system/timer"
-	"github.com/dantas/gocoindesktop/ui"
 	"github.com/dantas/gocoindesktop/ui/fynegui"
+	"github.com/dantas/gocoindesktop/ui/presenter"
 )
 
 func main() {
 	application := newApplicationCompositionRoot()
-	presenter := ui.NewApplicationPresenter(application)
-	fynegui.Run(presenter)
+	pres := presenter.NewApplicationPresenter(application)
+	fynegui.Run(pres)
 }
 
 func newApplicationCompositionRoot() *domain.Application {

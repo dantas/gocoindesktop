@@ -17,7 +17,7 @@ type Presenter interface {
 	SetAlarm(domain.Alarm)
 	Events() <-chan Event
 	Settings() domain.Settings
-	SetSettings(settings domain.Settings)
+	SetSettings(domain.Settings)
 	Errors() <-chan error
 	CoinAndAlarm() <-chan []domain.CoinAndAlarm
 	TriggeredAlarms() <-chan domain.TriggeredAlarm
