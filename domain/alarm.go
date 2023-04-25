@@ -1,8 +1,5 @@
 package domain
 
-// TODO: Find a better name than manager
-// TODO: Test manager
-
 type Alarm struct {
 	Name       string
 	LowerBound float64
@@ -21,6 +18,7 @@ type AlarmStorage interface {
 	Load() ([]Alarm, error)
 }
 
+// Find better name
 type AlarmManager struct {
 	storage AlarmStorage
 	entries map[string]alarmAndStatus
