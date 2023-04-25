@@ -10,18 +10,20 @@ import (
 )
 
 func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
-	storage := newStorage(t)
+	firstStorage := newStorage(t, true)
 
 	settings := domain.Settings{
 		Interval:         3 * time.Hour,
 		ShowWindowOnOpen: true,
 	}
 
-	if e := storage.Save(settings); e != nil {
+	if e := firstStorage.Save(settings); e != nil {
 		t.Fatal(e)
 	}
 
-	if loadedSettings, e := storage.Load(); e != nil {
+	secondStorage := newStorage(t, false)
+
+	if loadedSettings, e := secondStorage.Load(); e != nil {
 		t.Error("Error reading file from storage")
 	} else if settings != loadedSettings {
 		t.Error("Loaded settings is different from what is expected")
@@ -29,7 +31,7 @@ func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 }
 
 func TestSettingsFileStorageReturnsDefaultSettingsOnError(t *testing.T) {
-	storage := newStorage(t)
+	storage := newStorage(t, true)
 
 	settings, err := storage.Load()
 
@@ -42,11 +44,13 @@ func TestSettingsFileStorageReturnsDefaultSettingsOnError(t *testing.T) {
 	}
 }
 
-func newStorage(t *testing.T) domain.SettingsStorage {
+func newStorage(t *testing.T, delete bool) domain.SettingsStorage {
 	location := path.Join(os.TempDir(), "settings.json")
 
-	if e := os.Remove(location); e != nil && !os.IsNotExist(e) {
-		t.Errorf("Error removing file from temporary storage, test setup error: %v", e)
+	if delete {
+		if e := os.Remove(location); e != nil && !os.IsNotExist(e) {
+			t.Errorf("Error removing file from temporary storage, test setup error: %v", e)
+		}
 	}
 
 	return NewSettingsStorage(location)
