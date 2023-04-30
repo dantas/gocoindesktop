@@ -6,12 +6,13 @@ import (
 	"testing"
 
 	"github.com/dantas/gocoindesktop/domain"
-	"github.com/dantas/gocoindesktop/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	firstStorage := newStorage(t, true)
 
+	// Arrange
 	alarms := []domain.Alarm{
 		{
 			Name:       "First Coin",
@@ -27,31 +28,29 @@ func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 		},
 	}
 
+	// Act
 	if e := firstStorage.Save(alarms); e != nil {
 		t.Fatal(e)
 	}
 
 	secondStorage := newStorage(t, false)
+	loadedAlarms, err := secondStorage.Load()
 
-	if loadedAlarms, e := secondStorage.Load(); e != nil {
-		t.Error("Error reading file from storage")
-	} else if !utils.Equals(alarms, loadedAlarms) {
-		t.Error("Loaded settings is different from what is expected")
-	}
+	// Assert
+	assert.Nil(t, err)
+	assert.Equal(t, alarms, loadedAlarms)
 }
 
 func TestIfFileDoesntExistExpectError(t *testing.T) {
+	// Arrange
 	storage := newStorage(t, true)
 
+	// Act
 	content, err := storage.Load()
 
-	if content != nil {
-		t.Error("File doesn't exist but storage decided to return something")
-	}
-
-	if err == nil {
-		t.Error("File doesn't exist but storage returned no error")
-	}
+	// Assert
+	assert.Nil(t, content)
+	assert.NotNil(t, err)
 }
 
 func newStorage(t *testing.T, delete bool) domain.AlarmStorage {
