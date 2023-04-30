@@ -10,9 +10,9 @@ import (
 )
 
 func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
+	// Arrange
 	firstStorage := newStorage(t, true)
 
-	// Arrange
 	alarms := []domain.Alarm{
 		{
 			Name:       "First Coin",
@@ -41,7 +41,7 @@ func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	assert.Equal(t, alarms, loadedAlarms)
 }
 
-func TestIfFileDoesntExistExpectError(t *testing.T) {
+func TestIfFileDoesntExistReturnNoError(t *testing.T) {
 	// Arrange
 	storage := newStorage(t, true)
 
@@ -50,7 +50,7 @@ func TestIfFileDoesntExistExpectError(t *testing.T) {
 
 	// Assert
 	assert.Nil(t, content)
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 }
 
 func newStorage(t *testing.T, delete bool) domain.AlarmStorage {

@@ -48,6 +48,10 @@ func (storage fileStorage) Load() (domain.Settings, error) {
 	var e error
 
 	if file, e = os.Open(string(storage)); e != nil {
+		if os.IsNotExist(e) {
+			e = nil
+		}
+
 		return domain.NewDefaultSettings(), e
 	}
 

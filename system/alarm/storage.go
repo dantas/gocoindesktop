@@ -58,6 +58,10 @@ func (storage fileStorage) Load() ([]domain.Alarm, error) {
 	var e error
 
 	if file, e = os.Open(string(storage)); e != nil {
+		if os.IsNotExist(e) {
+			e = nil
+		}
+
 		return nil, e
 	}
 

@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"github.com/dantas/gocoindesktop/domain"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
+	// Arrange
 	firstStorage := newStorage(t, true)
 
 	settings := domain.Settings{
@@ -17,31 +19,28 @@ func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 		ShowWindowOnOpen: true,
 	}
 
+	// Act
 	if e := firstStorage.Save(settings); e != nil {
 		t.Fatal(e)
 	}
-
 	secondStorage := newStorage(t, false)
+	loadedSettings, err := secondStorage.Load()
 
-	if loadedSettings, e := secondStorage.Load(); e != nil {
-		t.Error("Error reading file from storage")
-	} else if settings != loadedSettings {
-		t.Error("Loaded settings is different from what is expected")
-	}
+	// Assert
+	assert.Nil(t, err)
+	assert.Equal(t, settings, loadedSettings)
 }
 
-func TestSettingsFileStorageReturnsDefaultSettingsOnError(t *testing.T) {
+func TestSettingsFileStorageReturnsDefaultSettingsAndNoError(t *testing.T) {
+	// Arrange
 	storage := newStorage(t, true)
 
+	// Act
 	settings, err := storage.Load()
 
-	if err == nil {
-		t.Error("Expected error, but found nothing")
-	}
-
-	if settings != domain.NewDefaultSettings() {
-		t.Errorf("Expected default settings, but found %v", settings)
-	}
+	// Assert
+	assert.Nil(t, err)
+	assert.Equal(t, domain.NewDefaultSettings(), settings)
 }
 
 func newStorage(t *testing.T, delete bool) domain.SettingsStorage {
