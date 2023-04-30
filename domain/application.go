@@ -30,6 +30,12 @@ func NewApplication(
 }
 
 func (app *Application) Start() {
+	app.timer.SetInterval(app.loadSettings().Interval)
+
+	if err := app.alarmManager.Load(); err != nil {
+		app.errors <- err
+	}
+
 	go func() {
 		app.fetchCoins()
 
@@ -37,12 +43,6 @@ func (app *Application) Start() {
 			app.fetchCoins()
 		}
 	}()
-
-	app.timer.SetInterval(app.loadSettings().Interval)
-
-	if err := app.alarmManager.Load(); err != nil {
-		app.errors <- err
-	}
 }
 
 func (app *Application) CoinsAndAlarms() <-chan []CoinAndAlarm {
