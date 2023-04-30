@@ -16,7 +16,7 @@ Development is on master because I'm the only sheriff in this town
 ### Build options
 
 - Default language is english. Use build tag **pt** for the portuguese language.
-- To only test the UI, without any domain and IO, use build tag **testui**.
+- To only test the UI without any domain and IO, use build tag **testui**.
 
 ### Build system requirements
 
