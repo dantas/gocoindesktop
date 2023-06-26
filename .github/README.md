@@ -1,8 +1,8 @@
 # Go Coin Desktop
 
-This is my first Go project. It is developed and tested in Linux, with no guarantees if it works on other OSes.
-
 It is a desktop app that displays the values of cryptocurrencies, can be minimized to systray and notify the client when the coin is about to enter/leave a specified range of value.
+
+It is developed and tested in Linux, with no guarantees if it works on other OSes.
 
 ## Screenshots
 
