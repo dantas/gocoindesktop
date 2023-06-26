@@ -13,10 +13,10 @@ No library for dependency injection. I'm manually constructing the composition r
 
 Development is on master because I'm the only sheriff in this town
 
-### Build options
+### Build Tags
 
-- Default language is english. Use build tag **pt** for the portuguese language.
-- To test the UI without any domain and IO, use build tag **testui**.
+- **pt**: Replace fefault language english with portuguese.
+- **testui**: Test UI without any domain and IO.
 
 ### Build system requirements
 
