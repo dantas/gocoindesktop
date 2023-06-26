@@ -14,7 +14,7 @@ It is developed and tested in Linux, with no guarantees if it works on other OSe
 
 ![System Tray](https://raw.githubusercontent.com/dantas/gocoindesktop/master/.github/readmedia/systemtray.jpg)
 
-## Development Notes
+# Developer Notes
 
 I'm using three different libraries to achieve this goal.
 - Fyne: for GUI and notifications.
@@ -25,12 +25,12 @@ No library for dependency injection. I'm manually constructing the composition r
 
 Development is on master because I'm the only sheriff in this town
 
-### Build Tags
+## Build Tags
 
 - **pt**: Replace english with portuguese (pt-br).
 - **testui**: Test UI without any domain and IO.
 
-### Build system requirements
+## Build system requirements
 
 Ensure the following packages are installed to successfully build the app on ubuntu:  
     ```sudo apt-get install pkg-config xorg-dev libayatana-appindicator3-dev```
