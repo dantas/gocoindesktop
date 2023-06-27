@@ -4,6 +4,8 @@ This is a desktop app that displays the values of cryptocurrencies, can be minim
 
 It is developed and tested in Linux, with no guarantees if it works on other OSes.
 
+**Status**: Completed
+
 ## Screenshots
 
 ![Coin Tab](https://raw.githubusercontent.com/dantas/gocoindesktop/master/.github/readmedia/coins.jpg)
