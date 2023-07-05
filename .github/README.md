@@ -4,7 +4,7 @@ This is a desktop app that displays the values of cryptocurrencies, can be minim
 
 It is developed and tested in Linux, with no guarantees if it works on other OSes.
 
-**Status**: Completed
+**Status**: Completed, but with pending fix regarding how data is parsed from CoinMarketCap
 
 ## Screenshots
 
