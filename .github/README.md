@@ -4,7 +4,7 @@ This is a desktop app that displays the values of cryptocurrencies, can be minim
 
 It is developed and tested in Linux, with no guarantees if it works on other OSes.
 
-**Status**: Completed, but with pending fix regarding how data is parsed from CoinMarketCap
+**Status**: Completed
 
 ## Screenshots
 
@@ -37,3 +37,9 @@ Development is on master because I'm the only sheriff in this town
 Ensure the following packages are installed to successfully build the app on ubuntu:  
     ```sudo apt-get install pkg-config xorg-dev libayatana-appindicator3-dev```
 
+## Architecture
+
+Since this is my first Go project, I'm using the minimum amount of third party libraries.  
+I purposely avoided using many Fyne features like data binding and storage since I'm learning/practicing Go and I want to code more, not less.  
+This app uses **Clean Architecture**. Domain is isolated from external API and filesystem. **Dependency injection** is used to provide the appropriate dependencies.  
+**Presenter** is isolated from the rest of the application, so that one can build the app (using *testui* flag) and develop/test the UI without having to worry about the rest of the code.
