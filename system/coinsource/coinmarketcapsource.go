@@ -1,49 +1,81 @@
 package coinsource
 
 import (
-	"strconv"
-	"strings"
-	"time"
+	"bufio"
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/dantas/gocoindesktop/domain"
-	"github.com/gocolly/colly/v2"
 )
 
 func CoinMarketCapSource() ([]domain.Coin, error) {
-	var resultCoins = make([]domain.Coin, 0)
-	var resultError error
+	var err error
 
-	collector := colly.NewCollector()
+	marshaledJson, err := fetchMarshaledJson()
 
-	collector.OnResponse(func(r *colly.Response) {
-		// sleep one second to ensure javascript has time to update the listing
-		time.Sleep(1 * time.Second)
-	})
+	if err != nil {
+		return nil, err
+	}
 
-	collector.OnHTML(`tr[class="cmc-table-row"]`, func(e *colly.HTMLElement) {
-		scrappedName := e.ChildAttr("a", "title")
-		scrappedPrice := e.ChildText(`td:nth-child(5) a`)
+	apiJson, err := parseJson(marshaledJson)
 
-		sanitizedPrice := strings.Replace(scrappedPrice[1:], ",", "", -1)
-		priceFloat, err := strconv.ParseFloat(sanitizedPrice, 64)
+	if err != nil {
+		return nil, err
+	}
 
-		if err != nil {
-			resultError = err
-		} else {
-			resultCoins = append(resultCoins, domain.Coin{
-				Name:  scrappedName,
-				Price: priceFloat,
-			})
+	var coins = make([]domain.Coin, 0, len(apiJson.Data.CryptoCurrencyList))
+
+	for _, coin := range apiJson.Data.CryptoCurrencyList {
+		if len(coin.Quotes) == 0 {
+			continue
 		}
-	})
 
-	collector.OnError(func(r *colly.Response, err error) {
-		resultError = err
-	})
+		coins = append(coins, domain.Coin{
+			Name:  coin.Name,
+			Price: coin.Quotes[0].Price,
+		})
+	}
 
-	collector.Visit("https://coinmarketcap.com/all/views/all/")
+	return coins, nil
+}
 
-	collector.Wait()
+const apiUrl = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=50&sortBy=market_cap&sortType=desc&convert=USD&cryptoType=all&tagType=all&audited=false"
 
-	return resultCoins, resultError
+func fetchMarshaledJson() ([]byte, error) {
+	var response *http.Response
+	var err error
+
+	if response, err = http.Get(apiUrl); err != nil {
+		return nil, err
+	}
+
+	reader := bufio.NewReader(response.Body)
+
+	bytes, err := ioutil.ReadAll(reader)
+
+	response.Body.Close()
+
+	return bytes, err
+}
+
+func parseJson(marshaledJson []byte) (*jsonFormat, error) {
+	var apiJson jsonFormat
+
+	if err := json.Unmarshal(marshaledJson, &apiJson); err != nil {
+		return nil, err
+	}
+
+	return &apiJson, nil
+}
+
+type jsonFormat struct {
+	Data struct {
+		CryptoCurrencyList []struct {
+			Name   string `json:"name"`
+			Quotes []struct {
+				Price float64 `json:"price"`
+			} `json:"quotes"`
+		} `json:"cryptoCurrencyList"`
+	} `json:"data"`
 }
