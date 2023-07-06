@@ -21,7 +21,6 @@ It is developed and tested in Linux, with no guarantees if it works on other OSe
 I'm using three different libraries to achieve this goal.
 - Fyne: for GUI and notifications.
 - systray: Systray library. 
-- colly: for scrapping HTML
 
 No library for dependency injection. I'm manually constructing the composition root.
 
