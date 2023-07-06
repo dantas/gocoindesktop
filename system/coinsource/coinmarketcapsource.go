@@ -26,7 +26,9 @@ func CoinMarketCapSource() ([]domain.Coin, error) {
 
 	var coins = make([]domain.Coin, 0, len(apiJson.Data.CryptoCurrencyList))
 
-	for _, coin := range apiJson.Data.CryptoCurrencyList {
+	for i := range apiJson.Data.CryptoCurrencyList {
+		var coin = &apiJson.Data.CryptoCurrencyList[i]
+
 		if len(coin.Quotes) == 0 {
 			continue
 		}
