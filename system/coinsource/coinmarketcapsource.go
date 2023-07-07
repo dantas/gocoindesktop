@@ -52,11 +52,11 @@ func fetchMarshaledJson() ([]byte, error) {
 		return nil, err
 	}
 
+	defer response.Body.Close()
+
 	reader := bufio.NewReader(response.Body)
 
 	bytes, err := ioutil.ReadAll(reader)
-
-	response.Body.Close()
 
 	return bytes, err
 }
