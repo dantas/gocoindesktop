@@ -56,7 +56,6 @@ func AlarmLeaveRangeMessage(alarm domain.TriggeredAlarm) string {
 const SettingsUpdateInterval = "Intervalo de atualização"
 const SettingsShowWindowOnOpen = "Mostrar janela na abertura"
 const SettingsShowWindowOnOpenOption = "Sim"
-const SettingsSubmitButton = "Atualizar"
 const Settings1Min = "1 min"
 const Settings2Min = "2 min"
 const Settings5Min = "5 min"

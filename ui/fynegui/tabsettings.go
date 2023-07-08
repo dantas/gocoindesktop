@@ -4,51 +4,39 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2/widget"
-	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
 func createSettingsTab(pres Presenter) *widget.Form {
-	intervalOption := pres.Settings().Interval
+	settings := pres.Settings()
+
 	intervalWidget := widget.NewFormItem(
 		localization.SettingsUpdateInterval,
-		createIntervalOption(&intervalOption),
+		createIntervalOption(settings.Interval, func(interval time.Duration) {
+			settings.Interval = interval
+			pres.SetSettings(settings)
+		}),
 	)
 
-	windowOnOpen := pres.Settings().ShowWindowOnOpen
 	showWindowOnOpenOption := widget.NewFormItem(
 		localization.SettingsShowWindowOnOpen,
-		createShowWindowOnOpenOption(&windowOnOpen),
+		createShowWindowOnOpenOption(settings.ShowWindowOnOpen, func(isChecked bool) {
+			settings.ShowWindowOnOpen = isChecked
+			pres.SetSettings(settings)
+		}),
 	)
 
-	form := widget.NewForm(intervalWidget, showWindowOnOpenOption)
-
-	form.SubmitText = localization.SettingsSubmitButton
-	form.OnSubmit = func() {
-		newSettings := domain.Settings{
-			Interval:         intervalOption,
-			ShowWindowOnOpen: windowOnOpen,
-		}
-
-		pres.SetSettings(newSettings)
-	}
-
-	return form
+	return widget.NewForm(intervalWidget, showWindowOnOpenOption)
 }
 
-func createShowWindowOnOpenOption(show *bool) *widget.Check {
-	onCheck := func(isChecked bool) {
-		*show = isChecked
-	}
-
-	widget := widget.NewCheck(localization.SettingsShowWindowOnOpenOption, onCheck)
-
-	widget.Checked = *show
+func createShowWindowOnOpenOption(initialValue bool, onChanged func(isChecked bool)) *widget.Check {
+	widget := widget.NewCheck(localization.SettingsShowWindowOnOpenOption, onChanged)
+	widget.Checked = initialValue
 
 	return widget
 }
 
-func createIntervalOption(interval *time.Duration) *widget.Select {
+func createIntervalOption(initialValue time.Duration, onChanged func(interval time.Duration)) *widget.Select {
 	options := []string{
 		localization.Settings1Min,
 		localization.Settings2Min,
@@ -58,18 +46,22 @@ func createIntervalOption(interval *time.Duration) *widget.Select {
 	}
 
 	onSelected := func(selected string) {
+		var duration time.Duration
+
 		switch selected {
 		case localization.Settings1Min:
-			*interval = 1 * time.Minute
+			duration = 1 * time.Minute
 		case localization.Settings2Min:
-			*interval = 2 * time.Minute
+			duration = 2 * time.Minute
 		case localization.Settings5Min:
-			*interval = 5 * time.Minute
+			duration = 5 * time.Minute
 		case localization.Settings10Min:
-			*interval = 10 * time.Minute
+			duration = 10 * time.Minute
 		case localization.Settings1Hour:
-			*interval = 1 * time.Hour
+			duration = 1 * time.Hour
 		}
+
+		onChanged(duration)
 	}
 
 	selectWidget := widget.NewSelect(
@@ -77,7 +69,7 @@ func createIntervalOption(interval *time.Duration) *widget.Select {
 		onSelected,
 	)
 
-	switch *interval {
+	switch initialValue {
 	case 1 * time.Minute:
 		selectWidget.SetSelectedIndex(0)
 	case 2 * time.Minute:
