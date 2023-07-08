@@ -41,4 +41,5 @@ Ensure the following packages are installed to successfully build the app on ubu
 Since this is my first Go project, I'm using the minimum amount of third party libraries.  
 I purposely avoided using many Fyne features like data binding and storage since I'm learning/practicing Go and I want to code more, not less.  
 This app uses **Clean Architecture**. Domain is isolated from external API and filesystem. **Dependency injection** is used to provide the appropriate dependencies.  
-**Presenter** is isolated from the rest of the application, so that one can build the app (using *testui* flag) and develop/test the UI without having to worry about the rest of the code.
+**Presenter** isolates the UI from the rest of the application. We can build the app in test ui mode (using *testui* flag) and develop/test the ui without having to worry about the rest of the code.  
+Domain is tested in [domain_test.go](https://github.com/dantas/gocoindesktop/blob/master/domain/domain_test.go). These tests are integration tests that follow the [Big Bang Method](https://www.linkedin.com/advice/0/how-can-big-bang-integration-testing-save-time), but with external API and filesystem stubed out to make the tests predictable and independent of each other.
