@@ -4,39 +4,39 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2/widget"
+	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
-func createSettingsTab(pres Presenter) *widget.Form {
-	settings := pres.Settings()
+type settingsTab struct {
+	*widget.Form
+	settings  domain.Settings
+	presenter Presenter
+}
+
+func newSettingsTab(presenter Presenter) *settingsTab {
+	tab := settingsTab{
+		nil,
+		presenter.Settings(),
+		presenter,
+	}
 
 	intervalWidget := widget.NewFormItem(
 		localization.SettingsUpdateInterval,
-		createIntervalOption(settings.Interval, func(interval time.Duration) {
-			settings.Interval = interval
-			pres.SetSettings(settings)
-		}),
+		tab.newIntervalOption(),
 	)
 
 	showWindowOnOpenOption := widget.NewFormItem(
 		localization.SettingsShowWindowOnOpen,
-		createShowWindowOnOpenOption(settings.ShowWindowOnOpen, func(isChecked bool) {
-			settings.ShowWindowOnOpen = isChecked
-			pres.SetSettings(settings)
-		}),
+		tab.newShowWindowOnOpenOption(),
 	)
 
-	return widget.NewForm(intervalWidget, showWindowOnOpenOption)
+	tab.Form = widget.NewForm(intervalWidget, showWindowOnOpenOption)
+
+	return &tab
 }
 
-func createShowWindowOnOpenOption(initialValue bool, onChanged func(isChecked bool)) *widget.Check {
-	widget := widget.NewCheck(localization.SettingsShowWindowOnOpenOption, onChanged)
-	widget.Checked = initialValue
-
-	return widget
-}
-
-func createIntervalOption(initialValue time.Duration, onChanged func(interval time.Duration)) *widget.Select {
+func (t *settingsTab) newIntervalOption() *widget.Select {
 	options := []string{
 		localization.Settings1Min,
 		localization.Settings2Min,
@@ -61,7 +61,8 @@ func createIntervalOption(initialValue time.Duration, onChanged func(interval ti
 			duration = 1 * time.Hour
 		}
 
-		onChanged(duration)
+		t.settings.Interval = duration
+		t.save()
 	}
 
 	selectWidget := widget.NewSelect(
@@ -69,7 +70,7 @@ func createIntervalOption(initialValue time.Duration, onChanged func(interval ti
 		onSelected,
 	)
 
-	switch initialValue {
+	switch t.settings.Interval {
 	case 1 * time.Minute:
 		selectWidget.SetSelectedIndex(0)
 	case 2 * time.Minute:
@@ -83,4 +84,19 @@ func createIntervalOption(initialValue time.Duration, onChanged func(interval ti
 	}
 
 	return selectWidget
+}
+
+func (t *settingsTab) newShowWindowOnOpenOption() *widget.Check {
+	widget := widget.NewCheck(localization.SettingsShowWindowOnOpenOption, func(isChecked bool) {
+		t.settings.ShowWindowOnOpen = isChecked
+		t.save()
+	})
+
+	widget.Checked = t.settings.ShowWindowOnOpen
+
+	return widget
+}
+
+func (t *settingsTab) save() {
+	t.presenter.SetSettings(t.settings)
 }
