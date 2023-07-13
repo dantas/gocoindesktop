@@ -51,7 +51,7 @@ func createWindow(app fyne.App, pres Presenter) fyne.Window {
 	window = app.NewWindow(localization.AppTitle)
 
 	appTabs = container.NewAppTabs(
-		container.NewTabItem(localization.TabCoins, createCoinsTab(window, pres)),
+		container.NewTabItem(localization.TabCoins, newCoinsTab(window, pres)),
 		container.NewTabItem(localization.TabSettings, newSettingsTab(pres)),
 	)
 
