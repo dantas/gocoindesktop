@@ -1,5 +1,7 @@
 package domain
 
+import "errors"
+
 type Alarm struct {
 	Name       string
 	LowerBound float64
@@ -12,6 +14,11 @@ type TriggeredAlarm struct {
 	Coin    Coin
 	InRange bool
 }
+
+var (
+	ErrSaveAlarm = errors.New("error saving alarms")
+	ErrLoadAlarm = errors.New("error loading alarms")
+)
 
 type AlarmStorage interface {
 	Save(alarms []Alarm) error

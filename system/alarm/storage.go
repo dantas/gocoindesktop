@@ -2,7 +2,7 @@ package alarm
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"os"
 
 	"github.com/dantas/gocoindesktop/domain"
@@ -30,7 +30,7 @@ func (storage fileStorage) Save(alarms []domain.Alarm) error {
 	var e error
 
 	if file, e = os.Create(string(storage)); e != nil {
-		return newSaveError(e)
+		return errors.Join(domain.ErrSaveAlarm, e)
 	}
 
 	defer file.Close()
@@ -48,14 +48,10 @@ func (storage fileStorage) Save(alarms []domain.Alarm) error {
 	encoder := json.NewEncoder(file)
 
 	if e := encoder.Encode(&toEncode); e != nil {
-		return newSaveError(e)
+		return errors.Join(domain.ErrSaveAlarm, e)
 	}
 
 	return nil
-}
-
-func newSaveError(err error) error {
-	return fmt.Errorf("error saving alarms to disk: %w", err)
 }
 
 func (storage fileStorage) Load() ([]domain.Alarm, error) {
@@ -67,7 +63,7 @@ func (storage fileStorage) Load() ([]domain.Alarm, error) {
 			e = nil
 		}
 
-		return nil, newLoadError(e)
+		return nil, errors.Join(domain.ErrLoadAlarm, e)
 	}
 
 	defer file.Close()
@@ -77,7 +73,7 @@ func (storage fileStorage) Load() ([]domain.Alarm, error) {
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return nil, newLoadError(e)
+		return nil, errors.Join(domain.ErrLoadAlarm, e)
 	}
 
 	alarms := make([]domain.Alarm, 0, len(decoded.Alarms))
@@ -87,8 +83,4 @@ func (storage fileStorage) Load() ([]domain.Alarm, error) {
 	}
 
 	return alarms, nil
-}
-
-func newLoadError(err error) error {
-	return fmt.Errorf("error loading alarms from disk: %w", err)
 }
