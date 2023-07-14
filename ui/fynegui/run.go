@@ -19,7 +19,7 @@ func Run(presenter Presenter) {
 		quit(fyneApp)
 	}()
 
-	createWindow(fyneApp, presenter)
+	newWindow(fyneApp, presenter)
 
 	setupSystray(cancelFunc, presenter)
 

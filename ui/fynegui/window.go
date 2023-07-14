@@ -7,17 +7,26 @@ import (
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
-func createWindow(app fyne.App, pres Presenter) fyne.Window {
-	var window fyne.Window
+type appWindow struct {
+	fyne.Window
+	tabs      *container.AppTabs
+	presenter Presenter
+}
+
+func newWindow(app fyne.App, presenter Presenter) *appWindow {
+	window := &appWindow{
+		Window:    app.NewWindow(localization.AppTitle),
+		presenter: presenter,
+	}
 
 	go func() {
-		for err := range pres.Errors() {
+		for err := range presenter.Errors() {
 			dialog.ShowError(err, window)
 		}
 	}()
 
 	go func() {
-		for alarm := range pres.TriggeredAlarms() {
+		for alarm := range window.presenter.TriggeredAlarms() {
 			title := localization.AlarmTitle(alarm)
 
 			var content string
@@ -33,34 +42,32 @@ func createWindow(app fyne.App, pres Presenter) fyne.Window {
 		}
 	}()
 
-	var appTabs *container.AppTabs
+	// var appTabs *container.AppTabs
 
 	go func() {
-		for event := range pres.Events() {
+		for event := range window.presenter.Events() {
 			switch event {
 			case PRESENTER_SHOW_COINS:
 				window.Show()
-				appTabs.SelectIndex(0)
+				window.tabs.SelectIndex(0)
 			case PRESENTER_SHOW_SETTINGS:
 				window.Show()
-				appTabs.SelectIndex(1)
+				window.tabs.SelectIndex(1)
 			}
 		}
 	}()
 
-	window = app.NewWindow(localization.AppTitle)
-
-	appTabs = container.NewAppTabs(
-		container.NewTabItem(localization.TabCoins, newCoinsTab(window, pres)),
-		container.NewTabItem(localization.TabSettings, newSettingsTab(pres)),
+	window.tabs = container.NewAppTabs(
+		container.NewTabItem(localization.TabCoins, newCoinsTab(window, window.presenter)),
+		container.NewTabItem(localization.TabSettings, newSettingsTab(window.presenter)),
 	)
 
-	window.SetContent(appTabs)
+	window.SetContent(window.tabs)
 	window.Resize(localization.WindowSize())
 	window.SetCloseIntercept(window.Hide)
 	window.CenterOnScreen()
 
-	if pres.Settings().ShowWindowOnOpen {
+	if presenter.Settings().ShowWindowOnOpen {
 		window.Show()
 	}
 
