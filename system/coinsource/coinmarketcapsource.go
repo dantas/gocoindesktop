@@ -3,7 +3,7 @@ package coinsource
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -16,13 +16,13 @@ func CoinMarketCapSource() ([]domain.Coin, error) {
 	marshaledJson, err := fetchMarshaledJson()
 
 	if err != nil {
-		return nil, newError(err)
+		return nil, errors.Join(domain.ErrCoinSource, err)
 	}
 
 	apiJson, err := parseJson(marshaledJson)
 
 	if err != nil {
-		return nil, newError(err)
+		return nil, errors.Join(domain.ErrCoinSource, err)
 	}
 
 	var coins = make([]domain.Coin, 0, len(apiJson.Data.CryptoCurrencyList))
@@ -81,8 +81,4 @@ type jsonFormat struct {
 			} `json:"quotes"`
 		} `json:"cryptoCurrencyList"`
 	} `json:"data"`
-}
-
-func newError(err error) error {
-	return fmt.Errorf("error fetching coins from CoinMarketCap: %w", err)
 }

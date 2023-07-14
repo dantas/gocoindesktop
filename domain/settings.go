@@ -1,7 +1,13 @@
 package domain
 
 import (
+	"errors"
 	"time"
+)
+
+var (
+	ErrSaveSettings = errors.New("error saving settings to disk")
+	ErrLoadSettings = errors.New("error loading settings from disk")
 )
 
 type Settings struct {
