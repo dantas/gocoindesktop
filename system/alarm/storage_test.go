@@ -41,7 +41,7 @@ func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	assert.Equal(t, alarms, loadedAlarms)
 }
 
-func TestIfFileDoesntExistReturnNoError(t *testing.T) {
+func TestIfFileDoesntExistReturnExpectedError(t *testing.T) {
 	// Arrange
 	storage := newStorage(t, true)
 
@@ -50,7 +50,7 @@ func TestIfFileDoesntExistReturnNoError(t *testing.T) {
 
 	// Assert
 	assert.Nil(t, content)
-	assert.Nil(t, err)
+	assert.Equal(t, domain.ErrLoadAlarmNotExist, err)
 }
 
 func newStorage(t *testing.T, delete bool) domain.AlarmStorage {

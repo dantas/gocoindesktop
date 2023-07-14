@@ -50,7 +50,7 @@ func (storage fileStorage) Load() (domain.Settings, error) {
 
 	if file, e = os.Open(string(storage)); e != nil {
 		if os.IsNotExist(e) {
-			e = errors.Join(domain.ErrLoadSettingsNotExist, e)
+			e = domain.ErrLoadSettingsNotExist
 		} else {
 			e = errors.Join(domain.ErrLoadSettings, e)
 		}

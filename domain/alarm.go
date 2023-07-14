@@ -16,8 +16,9 @@ type TriggeredAlarm struct {
 }
 
 var (
-	ErrSaveAlarm = errors.New("error saving alarms")
-	ErrLoadAlarm = errors.New("error loading alarms")
+	ErrSaveAlarm         = errors.New("error saving alarms")
+	ErrLoadAlarm         = errors.New("error loading alarms")
+	ErrLoadAlarmNotExist = errors.New("error persisted alarms do not exist")
 )
 
 type AlarmStorage interface {
@@ -46,7 +47,7 @@ func NewAlarmManager(storage AlarmStorage) *AlarmManager {
 func (manager *AlarmManager) Load() error {
 	alarms, err := manager.storage.Load()
 
-	if err != nil {
+	if err != nil && !errors.Is(err, ErrLoadAlarmNotExist) {
 		return err
 	}
 

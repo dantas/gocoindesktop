@@ -60,10 +60,12 @@ func (storage fileStorage) Load() ([]domain.Alarm, error) {
 
 	if file, e = os.Open(string(storage)); e != nil {
 		if os.IsNotExist(e) {
-			e = nil
+			e = domain.ErrLoadAlarmNotExist
+		} else {
+			e = errors.Join(domain.ErrLoadAlarm, e)
 		}
 
-		return nil, errors.Join(domain.ErrLoadAlarm, e)
+		return nil, e
 	}
 
 	defer file.Close()
