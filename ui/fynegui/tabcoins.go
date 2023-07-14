@@ -33,13 +33,15 @@ func newCoinsTab(window fyne.Window, presenter Presenter) *coinsTab {
 
 	setColumnWidth(t.Table)
 
+	return t
+}
+
+func (t *coinsTab) Start() {
 	go func() {
-		for t.coinsAndAlarms = range presenter.CoinAndAlarm() {
+		for t.coinsAndAlarms = range t.presenter.CoinAndAlarm() {
 			t.Table.Refresh()
 		}
 	}()
-
-	return t
 }
 
 func (t *coinsTab) tableSize() (int, int) {

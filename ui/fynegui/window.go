@@ -9,24 +9,43 @@ import (
 
 type appWindow struct {
 	fyne.Window
-	tabs      *container.AppTabs
+	app       fyne.App
 	presenter Presenter
+	tabs      *container.AppTabs
+	coinTab   *coinsTab
 }
 
 func newWindow(app fyne.App, presenter Presenter) *appWindow {
 	window := &appWindow{
+		app:       app,
 		Window:    app.NewWindow(localization.AppTitle),
 		presenter: presenter,
 	}
 
+	window.coinTab = newCoinsTab(window, window.presenter)
+
+	window.tabs = container.NewAppTabs(
+		container.NewTabItem(localization.TabCoins, window.coinTab),
+		container.NewTabItem(localization.TabSettings, newSettingsTab(window.presenter)),
+	)
+
+	window.SetContent(window.tabs)
+	window.Resize(localization.WindowSize())
+	window.SetCloseIntercept(window.Hide)
+	window.CenterOnScreen()
+
+	return window
+}
+
+func (w *appWindow) Start() {
 	go func() {
-		for err := range presenter.Errors() {
-			dialog.ShowError(err, window)
+		for err := range w.presenter.Errors() {
+			dialog.ShowError(err, w)
 		}
 	}()
 
 	go func() {
-		for alarm := range window.presenter.TriggeredAlarms() {
+		for alarm := range w.presenter.TriggeredAlarms() {
 			title := localization.AlarmTitle(alarm)
 
 			var content string
@@ -36,40 +55,28 @@ func newWindow(app fyne.App, presenter Presenter) *appWindow {
 				content = localization.AlarmLeaveRangeMessage(alarm)
 			}
 
-			app.SendNotification(
+			w.app.SendNotification(
 				fyne.NewNotification(title, content),
 			)
 		}
 	}()
 
-	// var appTabs *container.AppTabs
-
 	go func() {
-		for event := range window.presenter.Events() {
+		for event := range w.presenter.Events() {
 			switch event {
 			case PRESENTER_SHOW_COINS:
-				window.Show()
-				window.tabs.SelectIndex(0)
+				w.Show()
+				w.tabs.SelectIndex(0)
 			case PRESENTER_SHOW_SETTINGS:
-				window.Show()
-				window.tabs.SelectIndex(1)
+				w.Show()
+				w.tabs.SelectIndex(1)
 			}
 		}
 	}()
 
-	window.tabs = container.NewAppTabs(
-		container.NewTabItem(localization.TabCoins, newCoinsTab(window, window.presenter)),
-		container.NewTabItem(localization.TabSettings, newSettingsTab(window.presenter)),
-	)
+	w.coinTab.Start()
 
-	window.SetContent(window.tabs)
-	window.Resize(localization.WindowSize())
-	window.SetCloseIntercept(window.Hide)
-	window.CenterOnScreen()
-
-	if presenter.Settings().ShowWindowOnOpen {
-		window.Show()
+	if w.presenter.Settings().ShowWindowOnOpen {
+		w.Show()
 	}
-
-	return window
 }
