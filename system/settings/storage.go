@@ -50,12 +50,12 @@ func (storage fileStorage) Load() (domain.Settings, error) {
 
 	if file, e = os.Open(string(storage)); e != nil {
 		if os.IsNotExist(e) {
-			e = nil
+			e = errors.Join(domain.ErrLoadSettingsNotExist, e)
 		} else {
 			e = errors.Join(domain.ErrLoadSettings, e)
 		}
 
-		return domain.NewDefaultSettings(), e
+		return domain.Settings{}, e
 	}
 
 	defer file.Close()
@@ -65,7 +65,7 @@ func (storage fileStorage) Load() (domain.Settings, error) {
 	decoder := json.NewDecoder(file)
 
 	if e = decoder.Decode(&decoded); e != nil {
-		return domain.NewDefaultSettings(), errors.Join(domain.ErrLoadSettings, e)
+		return domain.Settings{}, errors.Join(domain.ErrLoadSettings, e)
 	}
 
 	return domain.Settings{

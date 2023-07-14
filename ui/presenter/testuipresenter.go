@@ -3,6 +3,7 @@ package presenter
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/dantas/gocoindesktop/domain"
 	"github.com/dantas/gocoindesktop/ui/fynegui"
@@ -46,7 +47,10 @@ func (p *testUi) Events() <-chan fynegui.Event {
 }
 
 func (p *testUi) Settings() domain.Settings {
-	return domain.NewDefaultSettings()
+	return domain.Settings{
+		Interval:         5 * time.Minute,
+		ShowWindowOnOpen: true,
+	}
 }
 
 func (p *testUi) SetSettings(settings domain.Settings) {

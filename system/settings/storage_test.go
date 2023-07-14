@@ -31,18 +31,6 @@ func TestSettingsFileStorageIsCorrectlySavingAndLoading(t *testing.T) {
 	assert.Equal(t, settings, loadedSettings)
 }
 
-func TestSettingsFileStorageReturnsDefaultSettingsAndNoError(t *testing.T) {
-	// Arrange
-	storage := newStorage(t, true)
-
-	// Act
-	settings, err := storage.Load()
-
-	// Assert
-	assert.Nil(t, err)
-	assert.Equal(t, domain.NewDefaultSettings(), settings)
-}
-
 func newStorage(t *testing.T, delete bool) domain.SettingsStorage {
 	location := path.Join(os.TempDir(), "settings.json")
 

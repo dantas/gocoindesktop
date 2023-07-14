@@ -1,5 +1,7 @@
 package domain
 
+import "errors"
+
 type Application struct {
 	timer           PeriodicTimer
 	settingsStorage SettingsStorage
@@ -91,7 +93,11 @@ func (app *Application) loadSettings() Settings {
 	sett, err := app.settingsStorage.Load()
 
 	if err != nil {
-		app.errors <- err
+		if !errors.Is(err, ErrLoadSettingsNotExist) {
+			app.errors <- err
+		}
+
+		sett = newDefaultSettings()
 	}
 
 	return sett
