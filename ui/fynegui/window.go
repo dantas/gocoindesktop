@@ -7,40 +7,42 @@ import (
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
-type appWindow struct {
-	fyne.Window
-	app       fyne.App
-	presenter Presenter
-	tabs      *container.AppTabs
-	coinTab   *coinsTab
+type window struct {
+	fyneWindow  fyne.Window
+	fyneApp     fyne.App
+	fyneTabs    *container.AppTabs
+	presenter   Presenter
+	tabCoins    *tabCoins
+	tabSettings *tabSettings
 }
 
-func newWindow(app fyne.App, presenter Presenter) *appWindow {
-	window := &appWindow{
-		app:       app,
-		Window:    app.NewWindow(localization.AppTitle),
-		presenter: presenter,
+func newWindow(app fyne.App, presenter Presenter) *window {
+	window := &window{
+		fyneApp:    app,
+		fyneWindow: app.NewWindow(localization.AppTitle),
+		presenter:  presenter,
 	}
 
-	window.coinTab = newCoinsTab(window, window.presenter)
+	window.tabCoins = newTabCoins(window.fyneWindow, window.presenter)
+	window.tabSettings = newTabSettings(window.presenter)
 
-	window.tabs = container.NewAppTabs(
-		container.NewTabItem(localization.TabCoins, window.coinTab),
-		container.NewTabItem(localization.TabSettings, newSettingsTab(window.presenter)),
+	window.fyneTabs = container.NewAppTabs(
+		container.NewTabItem(localization.TabCoins, window.tabCoins.fyneTable),
+		container.NewTabItem(localization.TabSettings, window.tabSettings.fyneForm),
 	)
 
-	window.SetContent(window.tabs)
-	window.Resize(localization.WindowSize())
-	window.SetCloseIntercept(window.Hide)
-	window.CenterOnScreen()
+	window.fyneWindow.SetContent(window.fyneTabs)
+	window.fyneWindow.Resize(localization.WindowSize())
+	window.fyneWindow.SetCloseIntercept(window.fyneWindow.Hide)
+	window.fyneWindow.CenterOnScreen()
 
 	return window
 }
 
-func (w *appWindow) Start() {
+func (w *window) Start() {
 	go func() {
 		for err := range w.presenter.Errors() {
-			dialog.ShowError(err, w)
+			dialog.ShowError(err, w.fyneWindow)
 		}
 	}()
 
@@ -55,7 +57,7 @@ func (w *appWindow) Start() {
 				content = localization.AlarmLeaveRangeMessage(alarm)
 			}
 
-			w.app.SendNotification(
+			w.fyneApp.SendNotification(
 				fyne.NewNotification(title, content),
 			)
 		}
@@ -65,18 +67,18 @@ func (w *appWindow) Start() {
 		for event := range w.presenter.Events() {
 			switch event {
 			case PRESENTER_SHOW_COINS:
-				w.Show()
-				w.tabs.SelectIndex(0)
+				w.fyneWindow.Show()
+				w.fyneTabs.SelectIndex(0)
 			case PRESENTER_SHOW_SETTINGS:
-				w.Show()
-				w.tabs.SelectIndex(1)
+				w.fyneWindow.Show()
+				w.fyneTabs.SelectIndex(1)
 			}
 		}
 	}()
 
-	w.coinTab.Start()
+	w.tabCoins.Start()
 
 	if w.presenter.Settings().ShowWindowOnOpen {
-		w.Show()
+		w.fyneWindow.Show()
 	}
 }

@@ -12,54 +12,54 @@ import (
 
 const _COLUMN_SIZE = 5
 
-type coinsTab struct {
-	*widget.Table
+type tabCoins struct {
+	fyneTable      *widget.Table
 	coinsAndAlarms []domain.CoinAndAlarm // async code, must prevent lock?
 	presenter      Presenter
 }
 
-func newCoinsTab(window fyne.Window, presenter Presenter) *coinsTab {
-	t := &coinsTab{
+func newTabCoins(window fyne.Window, presenter Presenter) *tabCoins {
+	tab := &tabCoins{
 		nil,
 		make([]domain.CoinAndAlarm, 0),
 		presenter,
 	}
 
-	t.Table = widget.NewTable(
-		t.tableSize,
+	tab.fyneTable = widget.NewTable(
+		tab.tableSize,
 		createRowViews,
-		t.updateCell,
+		tab.updateCell,
 	)
 
-	setColumnWidth(t.Table)
+	setColumnWidth(tab.fyneTable)
 
-	return t
+	return tab
 }
 
-func (t *coinsTab) Start() {
+func (tab *tabCoins) Start() {
 	go func() {
-		for t.coinsAndAlarms = range t.presenter.CoinAndAlarm() {
-			t.Table.Refresh()
+		for tab.coinsAndAlarms = range tab.presenter.CoinAndAlarm() {
+			tab.fyneTable.Refresh()
 		}
 	}()
 }
 
-func (t *coinsTab) tableSize() (int, int) {
-	return len(t.coinsAndAlarms) + 1, _COLUMN_SIZE
+func (tab *tabCoins) tableSize() (int, int) {
+	return len(tab.coinsAndAlarms) + 1, _COLUMN_SIZE
 }
 
-func (t *coinsTab) updateCell(i widget.TableCellID, o fyne.CanvasObject) {
+func (tab *tabCoins) updateCell(i widget.TableCellID, o fyne.CanvasObject) {
 	rowViews := getRowViews(o)
 
 	if drawColumnName(i, rowViews) {
 		return
 	}
 
-	t.drawContent(i, rowViews)
+	tab.drawContent(i, rowViews)
 }
 
-func (t *coinsTab) drawContent(i widget.TableCellID, rowViews *rowViews) {
-	var coinAndAlarm *domain.CoinAndAlarm = &t.coinsAndAlarms[i.Row-1]
+func (tab *tabCoins) drawContent(i widget.TableCellID, rowViews *rowViews) {
+	var coinAndAlarm *domain.CoinAndAlarm = &tab.coinsAndAlarms[i.Row-1]
 
 	switch i.Col {
 	case 0:
@@ -81,7 +81,7 @@ func (t *coinsTab) drawContent(i widget.TableCellID, rowViews *rowViews) {
 		rowViews.check.OnChanged = func(isChecked bool) {
 			initializeAlarm(coinAndAlarm)
 			coinAndAlarm.Alarm.IsEnabled = isChecked
-			t.presenter.SetAlarm(*coinAndAlarm.Alarm)
+			tab.presenter.SetAlarm(*coinAndAlarm.Alarm)
 		}
 	case 3:
 		var text string
@@ -96,7 +96,7 @@ func (t *coinsTab) drawContent(i widget.TableCellID, rowViews *rowViews) {
 		rowViews.lowerBound.OnTextChangedAsFloat64(func(float float64) {
 			initializeAlarm(coinAndAlarm)
 			coinAndAlarm.Alarm.LowerBound = float
-			t.presenter.SetAlarm(*coinAndAlarm.Alarm)
+			tab.presenter.SetAlarm(*coinAndAlarm.Alarm)
 		})
 	case 4:
 		var text string
@@ -111,7 +111,7 @@ func (t *coinsTab) drawContent(i widget.TableCellID, rowViews *rowViews) {
 		rowViews.upperBound.OnTextChangedAsFloat64(func(float float64) {
 			initializeAlarm(coinAndAlarm)
 			coinAndAlarm.Alarm.UpperBound = float
-			t.presenter.SetAlarm(*coinAndAlarm.Alarm)
+			tab.presenter.SetAlarm(*coinAndAlarm.Alarm)
 		})
 	}
 }

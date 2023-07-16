@@ -8,14 +8,14 @@ import (
 	"github.com/dantas/gocoindesktop/ui/localization"
 )
 
-type settingsTab struct {
-	*widget.Form
+type tabSettings struct {
+	fyneForm  *widget.Form
 	settings  domain.Settings
 	presenter Presenter
 }
 
-func newSettingsTab(presenter Presenter) *settingsTab {
-	tab := settingsTab{
+func newTabSettings(presenter Presenter) *tabSettings {
+	tab := tabSettings{
 		nil,
 		presenter.Settings(),
 		presenter,
@@ -31,12 +31,12 @@ func newSettingsTab(presenter Presenter) *settingsTab {
 		tab.newShowWindowOnOpenOption(),
 	)
 
-	tab.Form = widget.NewForm(intervalWidget, showWindowOnOpenOption)
+	tab.fyneForm = widget.NewForm(intervalWidget, showWindowOnOpenOption)
 
 	return &tab
 }
 
-func (t *settingsTab) newIntervalOption() *widget.Select {
+func (tab *tabSettings) newIntervalOption() *widget.Select {
 	options := []string{
 		localization.Settings1Min,
 		localization.Settings2Min,
@@ -61,8 +61,8 @@ func (t *settingsTab) newIntervalOption() *widget.Select {
 			duration = 1 * time.Hour
 		}
 
-		t.settings.Interval = duration
-		t.save()
+		tab.settings.Interval = duration
+		tab.save()
 	}
 
 	selectWidget := widget.NewSelect(
@@ -70,7 +70,7 @@ func (t *settingsTab) newIntervalOption() *widget.Select {
 		onSelected,
 	)
 
-	switch t.settings.Interval {
+	switch tab.settings.Interval {
 	case 1 * time.Minute:
 		selectWidget.SetSelectedIndex(0)
 	case 2 * time.Minute:
@@ -86,17 +86,17 @@ func (t *settingsTab) newIntervalOption() *widget.Select {
 	return selectWidget
 }
 
-func (t *settingsTab) newShowWindowOnOpenOption() *widget.Check {
+func (tab *tabSettings) newShowWindowOnOpenOption() *widget.Check {
 	widget := widget.NewCheck(localization.SettingsShowWindowOnOpenOption, func(isChecked bool) {
-		t.settings.ShowWindowOnOpen = isChecked
-		t.save()
+		tab.settings.ShowWindowOnOpen = isChecked
+		tab.save()
 	})
 
-	widget.Checked = t.settings.ShowWindowOnOpen
+	widget.Checked = tab.settings.ShowWindowOnOpen
 
 	return widget
 }
 
-func (t *settingsTab) save() {
-	t.presenter.SetSettings(t.settings)
+func (tab *tabSettings) save() {
+	tab.presenter.SetSettings(tab.settings)
 }
