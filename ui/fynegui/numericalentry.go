@@ -52,3 +52,7 @@ func (e *numericalEntry) OnTextChangedAsFloat64(callback func(float64)) {
 		}
 	}
 }
+
+func (e *numericalEntry) ResetOnTextChanged() {
+	e.OnChanged = nil
+}

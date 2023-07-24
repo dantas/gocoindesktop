@@ -166,8 +166,8 @@ func getRowViews(o fyne.CanvasObject) *rowViews {
 	rowViews.lowerBound.Hide()
 	rowViews.upperBound.Hide()
 
-	rowViews.lowerBound.OnTextChangedAsFloat64(func(f float64) {})
-	rowViews.upperBound.OnTextChangedAsFloat64(func(f float64) {})
+	rowViews.lowerBound.ResetOnTextChanged()
+	rowViews.upperBound.ResetOnTextChanged()
 
 	return &rowViews
 }
