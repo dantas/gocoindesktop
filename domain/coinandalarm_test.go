@@ -31,18 +31,32 @@ func TestMergeCoinAndAlarm(t *testing.T) {
 		IsEnabled:  false,
 	}
 
+	shouldBeThereButNoAlarm := Coin{
+		Name:  "be_there",
+		Price: 12,
+	}
+
+	shouldNotBeThere := Alarm{
+		Name:       "not_there",
+		LowerBound: 23,
+		UpperBound: 53,
+		IsEnabled:  true,
+	}
+
 	sut := merge(
 		[]Coin{
-			bitcoinCoin, ethereumCoin,
+			bitcoinCoin, ethereumCoin, shouldBeThereButNoAlarm,
 		},
 		[]Alarm{
-			bitcoinAlarm, ethereumAlarm,
+			bitcoinAlarm, ethereumAlarm, shouldNotBeThere,
 		},
 	)
 
-	assert.Equal(t, len(sut), 2)
+	assert.Equal(t, len(sut), 3)
 	assert.Equal(t, sut[0].Coin, bitcoinCoin)
 	assert.Equal(t, *sut[0].Alarm, bitcoinAlarm)
 	assert.Equal(t, sut[1].Coin, ethereumCoin)
 	assert.Equal(t, *sut[1].Alarm, ethereumAlarm)
+	assert.Equal(t, sut[2].Coin, shouldBeThereButNoAlarm)
+	assert.Nil(t, sut[2].Alarm)
 }
