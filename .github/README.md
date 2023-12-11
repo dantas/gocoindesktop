@@ -18,7 +18,7 @@ It is developed and tested in Linux, with no guarantees if it works on other OSe
 
 # Developer Notes
 
-I'm using three different libraries to achieve this goal.
+I'm using two libraries to achieve this goal.
 - Fyne: for GUI and notifications.
 - systray: Systray library. 
 
