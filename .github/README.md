@@ -1,6 +1,6 @@
 # Go Coin Desktop
 
-This is a desktop app that displays the values of cryptocurrencies, can be minimized to systray and notify the client when the coin is about to enter/leave a specified range of value.
+This is a desktop app that displays the values of cryptocurrencies, can be minimized to systray and notifies the client when the coin is entering/leaving specified values.
 
 It is developed and tested in Linux, with no guarantees if it works on other OSes.
 
